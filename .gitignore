@@ -1,0 +1,6 @@
+/dist
+/node_modules
+/coverage/
+/esm/
+/lib/
+/docs/tmp.md
