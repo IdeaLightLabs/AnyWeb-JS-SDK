@@ -1,0 +1,6 @@
+/**
+ * @author Littleor <me@littleor.cn>
+ * @since 2022/2/12
+ */
+export const BASE_URL = 'http://192.168.31.149:10086/#/'
+export const API_BASE_URL = 'http://api.anyweb.cc'

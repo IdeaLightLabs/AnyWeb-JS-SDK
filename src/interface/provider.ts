@@ -13,7 +13,8 @@ export interface IRequestArguments {
 }
 
 export interface BaseProviderOptions {
-  logger: ConsoleLike
+  logger?: ConsoleLike
+  appId: string
 }
 
 /**

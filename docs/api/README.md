@@ -1,22 +1,17 @@
 anyweb-js-sdk / [Exports](modules.md)
 
-# js-conflux-sdk
+# AnyWeb JS SDK
 
-[![npm](https://img.shields.io/npm/v/js-conflux-sdk.svg)](https://www.npmjs.com/package/js-conflux-sdk)
-[![npm](https://img.shields.io/npm/dm/js-conflux-sdk.svg)](https://www.npmjs.com/package/js-conflux-sdk)
-
-JavaScript Conflux Software Development Kit is a complete library for interacting with the Conflux Blockchain in both Node.js and browser environment.
+JavaScript AnyWeb Software Development Kit is a complete library for interacting with the AnyChain in both Node.js and
+browser environment.
 
 Features:
 
-* Can be used in both browser and Node.js environment
-* Connect to Conflux node over HTTP/Websocket JSON-RPC
-* Meta-classes create JavaScript objects from any contract ABI
-* Account utilities
-* Type converter, sign and hash utilities
-* Extensive [documentation](https://confluxnetwork.gitbook.io/js-conflux-sdk/)
-* Builtin support for CRC20 and Internal Contracts
-* Batch RPC support
+* Support for Mobile and Desktop
+* Support H5 without plugin
+* Support for multiple chains
+* Support hot Wallet and cold Wallet
+* Easy to use for developers
 
 ## Docs
 
@@ -82,6 +77,7 @@ import { Conflux } from 'js-conflux-sdk';
 or
 
 ```html
+
 <script type="text/javascript" src="node_modules/js-conflux-sdk/dist/js-conflux-sdk.umd.min.js"></script>
 <script type="text/javascript">
   const conflux = new window.TreeGraph.Conflux({
@@ -100,7 +96,9 @@ Or you can use public CDN links:
 
 ## Address conversion performance
 
-To gain a address conversion(hex->base32 or reverse) performance boost, you can install [`@conflux-dev/conflux-address-rust`](https://github.com/conflux-fans/conflux-address-rust-binding) in your project. Which will be used to relace the purejs version and can gain a `10-100` performance boost.
+To gain a address conversion(hex->base32 or reverse) performance boost, you can
+install [`@conflux-dev/conflux-address-rust`](https://github.com/conflux-fans/conflux-address-rust-binding) in your
+project. Which will be used to relace the purejs version and can gain a `10-100` performance boost.
 
 Note: @conflux-dev/conflux-address-rust required a rust environment to install.
 
