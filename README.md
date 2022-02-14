@@ -1,75 +1,71 @@
 # AnyWeb JS SDK
 
-JavaScript AnyWeb Software Development Kit is a complete library for interacting with the AnyChain in both Node.js and
-browser environment.
+AnyWeb JS SDK 是为 Anyweb 开发的SDK，提供了一套简单的API，方便开发者快速将 Dapp 接入到 AnyWeb 中实现便捷的钱包服务。
 
 Features:
 
-* Support for Mobile and Desktop
-* Support H5 without plugin
-* Support for multiple chains
-* Support hot Wallet and cold Wallet
-* Easy to use for developers
+* 支持在移动端和PC端调用钱包服务
+* 支持网页内和跳转App调用钱包服务
+* 支持多链钱包服务
+* 支持 ` 热钱包 ` 和 ` 冷钱包 `
+* 简单易用快速上手
+
+## 支持性
+
+### 已支持
+
+* Conflux
+
+### 待支持
+
+* Conflux EVM Space
 
 ## Docs
 
-* [Home](README.md)
-* [Quick Start](docs/quick_start.md)
-* [API](docs/api/modules.md)
-    * [Provider](docs/api/classed/defaults.md)
-* [Release notes](CHANGELOG.md)
-*
+* [介绍](https://wiki.anyweb.cc/docs/intro)
+* [快速开始](https://wiki.anyweb.cc/docs/quick_start)
+* [API](https://wiki.anyweb.cc/docs/API/modules)
+    * [Provider](https://wiki.anyweb.cc/docs/API/classes/default)
+* [Release notes](https://wiki.anyweb.cc/docs/CHANGELOG)
 
-Check [SDK's documentation](https://wiki.anyweb.cc) site for more info.
+前往[ 官网文档 ](https://wiki.anyweb.cc)了解更多
 
-## Install
+## 开始之前
 
-Install through npm
+请先在[ AnyWeb开放平台 ](https://open.anyweb.cc)注册账号获取到AppId等相关信息。
+
+## 安装
+
+` npm ` 安装
 
 ```sh
 $ npm install --save anyweb-js-sdk
 ```
 
-## How to import
+## 引用方法
 
-### Nodejs
-
-Use in Node.js script
+### ESM
 
 ```javascript
-import * from 'anyweb-js-sdk';
+import { Provider } from 'anyweb-js-sdk';
 
-const conflux = new Provider({
+const provider = new Provider({
   logger: console,
-  appId: 'Your app id which get from open.anyweb.cc',
-})
+  appId: '从open.anyweb.cc拿到的AppId',
+});
 ```
 
-### Frontend
+### UMD
 
-#### umd
-
-The front packed package is located in `anyweb-js-sdk`'s dist folder.
-
-```javascript
-import { Conflux } from 'anyweb-js-sdk/dist/anyweb-js-sdk.umd.min.js';
-```
-
-or if your bundler supports the [`browser` field](https://docs.npmjs.com/files/package.json#browser) in `package.json`
-
-```javascript
-import * from 'anyweb-js-sdk';
-```
-
-or
+从 `anyweb-js-sdk` 的 `dist` 目录中进行引用 `umd` 版本.
 
 ```html
 
 <script type="text/javascript" src="node_modules/anyweb-js-sdk/dist/anyweb-js-sdk.umd.min.js"></script>
 <script type="text/javascript">
-  const anyweb = new window.AnyWeb({
+  const provider = new window.AnyWeb({
     logger: console,
-    appId: 'Your app id which get from open.anyweb.cc'
+    appId: '从open.anyweb.cc拿到的AppId'
   })
 </script>
 ```

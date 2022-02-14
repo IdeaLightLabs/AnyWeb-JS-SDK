@@ -29,11 +29,19 @@ export interface IIframeOptions {
   chainId: string
   scope?: number[]
   authType?: 'account' | 'createContract' | 'callContract' | 'createTransaction'
+  waitResult?: boolean
 }
 
 export const callIframe = async (
   path: string,
-  { appId, params, chainId, scope = [2], authType }: IIframeOptions
+  {
+    appId,
+    params,
+    chainId,
+    scope = [2],
+    authType,
+    waitResult = true,
+  }: IIframeOptions
 ) => {
   const hash = sha512(JSON.stringify({ appId, params }))
   const iframe = document.createElement('iframe')
@@ -64,33 +72,36 @@ export const callIframe = async (
     )}&chainId=${chainId}&params=${params}&scope=${JSON.stringify(scope)}`
   )
   document.body.insertBefore(iframe, document.body.firstElementChild)
-  return new Promise<unknown>(async (resolve, reject) => {
-    const delay = 800
-    const next = (i: number) => {
-      const timer = setTimeout(async () => {
-        try {
-          const data = (
-            await axios.post(`${API_BASE_URL}/open/serial/read`, {
-              serialNumber: serialNumber,
-              hash: hash,
-            })
-          ).data.data
-          if (data && data !== 'false' && data !== false) {
-            clearTimeout(timer)
-            document.getElementById('anyweb')?.remove()
-            resolve(JSON.parse(data))
-          } else {
-            if (i * delay > 10 * 60 * 1000) {
+  if (waitResult) {
+    return new Promise<unknown>(async (resolve, reject) => {
+      const delay = 800
+      const next = (i: number) => {
+        const timer = setTimeout(async () => {
+          try {
+            const data = (
+              await axios.post(`${API_BASE_URL}/open/serial/read`, {
+                serialNumber: serialNumber,
+                hash: hash,
+              })
+            ).data.data
+            if (data && data !== 'false' && data !== false) {
+              clearTimeout(timer)
               document.getElementById('anyweb')?.remove()
-              reject('time out')
+              resolve(JSON.parse(data))
+            } else {
+              if (i * delay > 10 * 60 * 1000) {
+                document.getElementById('anyweb')?.remove()
+                reject('time out')
+              }
+              next(i++)
             }
-            next(i++)
+          } catch (e) {
+            console.error("Can't get result from iframe", e)
           }
-        } catch (e) {
-          console.error("Can't get result from iframe", e)
-        }
-      }, delay)
-    }
-    next(0)
-  })
+        }, delay)
+      }
+      next(0)
+    })
+  }
+  return 'ok'
 }

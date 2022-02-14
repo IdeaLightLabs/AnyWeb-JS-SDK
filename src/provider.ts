@@ -10,6 +10,8 @@ import {
 } from './interface/provider'
 import { ConsoleLike } from './utils/types'
 import { callIframe } from './utils/common'
+import config from '../package.json'
+import { AddressType, getAddressType } from './utils/address'
 
 /**
  * AnyWeb Provider
@@ -31,6 +33,17 @@ export class Provider implements IProvider {
     this.logger = logger
     this.appId = appId
 
+    try {
+      this.address =
+        JSON.parse(
+          (window.localStorage &&
+            window.localStorage.getItem('anyweb_address')) ||
+            '[]'
+        ) || []
+    } catch (e) {
+      this.logger.error(e)
+    }
+
     // bind functions (to prevent consumers from making unbound calls)
     this.request = this.request.bind(this)
     this.call = this.call.bind(this)
@@ -40,6 +53,9 @@ export class Provider implements IProvider {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.conflux = this
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    window.anyweb = this
   }
 
   /**
@@ -82,8 +98,9 @@ export class Provider implements IProvider {
     if (!method || method.trim().length === 0) {
       throw new Error('Method is required')
     }
+    console.debug(`[AnyWeb] request ${method} with`, params)
     const result = await this.rawRequest(method, params)
-    console.info('(AnyWeb) request result:', result)
+    console.debug(`[AnyWeb] request(${method}):`, result)
     return result
   }
 
@@ -96,9 +113,15 @@ export class Provider implements IProvider {
     })
   }
 
+  /**
+   * Submits an RPC request
+   * @param method
+   * @param params
+   * @protected
+   */
   protected async rawRequest(
     method: string,
-    params?: readonly unknown[] | object
+    params?: readonly unknown[] | Record<string, unknown>
   ): Promise<unknown> {
     switch (method) {
       case 'cfx_netVersion':
@@ -106,7 +129,7 @@ export class Provider implements IProvider {
       case 'cfx_chainId':
         return 1
       case 'cfx_requestAccounts':
-        return ['cfxtest:aakd43w1n0dxfskatfv96nrtx1k88gx366azg3gvdz']
+        return this.rawRequest('cfx_accounts')
       case 'cfx_accounts':
         if (this.address.length > 0) {
           return this.address
@@ -117,9 +140,33 @@ export class Provider implements IProvider {
           chainId: (await this.request({ method: 'cfx_chainId' })) as string,
           authType: 'account',
         })) as string[]
+        window.localStorage &&
+          window.localStorage.setItem(
+            'anyweb_address',
+            JSON.stringify(this.address)
+          )
         return this.address
       case 'cfx_sendTransaction':
+        const paramsObj = params
+          ? Array.isArray(params) && params.length > 0
+            ? params[0]
+            : params
+          : {}
         return await callIframe('pages/dapp/auth', {
+          appId: this.appId,
+          chainId: (await this.request({ method: 'cfx_chainId' })) as string,
+          params: params ? JSON.stringify(paramsObj) : '',
+          authType:
+            params && Object.keys(paramsObj).includes('to') && paramsObj['to']
+              ? getAddressType(paramsObj['to']) === AddressType.CONTRACT
+                ? 'callContract'
+                : 'createTransaction'
+              : 'createContract',
+        })
+      case 'anyweb_version':
+        return config.version
+      case 'anyweb_home':
+        return await callIframe('pages/index/home', {
           appId: this.appId,
           chainId: (await this.request({ method: 'cfx_chainId' })) as string,
           params: params
@@ -127,7 +174,7 @@ export class Provider implements IProvider {
                 Array.isArray(params) && params.length > 0 ? params[0] : params
               )
             : '',
-          authType: 'createTransaction',
+          waitResult: false,
         })
       default:
         return 'default'

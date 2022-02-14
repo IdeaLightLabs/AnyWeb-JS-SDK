@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>AnyWeb Demo - Basic Dapp</title>
+  <meta name="description" content="">
+  <meta name="viewport" content=
+    "width=device-width, initial-scale=1">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href=
+    "https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+  <!-- Place favicon.ico in the root directory -->
+</head>
+<body>
+<main class="container">
+  <!--[if lt IE 8]>
+  <p class="browserupgrade">
+    You are using an <strong>outdated</strong> browser. Please
+    <a href="http://browsehappy.com/">upgrade your browser</a> to improve
+    your experience.
+  </p>
+  <![endif]-->
+  <article>
+    <header>
+      Install
+    </header>
+    <p>AnyWeb Wallet is <span id="installed">not
+      installed</span></p>
+    <footer>
+      AnyWeb Version: <span id="version">N/A</span>
+    </footer>
+  </article>
+  <div id="installed-section">
+    <article>
+      <header>
+        Initialize
+      </header>
+      <p>AnyWeb Wallet is <span id=
+                                  "initialized">initializing</span></p>
+      <footer>
+        <code>chainId</code>: <span id="chainId">N/A</span><br>
+        <code>networkId</code>: <span id="networkId">N/A</span>
+      </footer>
+    </article>
+    <article>
+      <header>
+        Connect
+      </header>
+      <button id="connect" disabled="true">Connect
+        Wallet
+      </button>
+      <footer>
+        Address: <span id="address">N/A</span>
+      </footer>
+    </article>
+    <article>
+      <header>
+        Send CFX
+      </header>
+      <form>
+        <label>
+          <input type="text" id=
+            "native-receiver" placeholder="接受者地址"><input type="number" id=
+          "native-count" placeholder="CFX数目">
+        </label>
+      </form>
+      <button id="send_native_token" disabled=
+        "true">Send
+      </button>
+      <footer>
+        Result: <span id="send_native_token_result">N/A</span>
+      </footer>
+    </article>
+    <article>
+      <header>
+        Approve (cUSDT)
+      </header>
+      <form>
+        <label>Spender Address <input type="text" id=
+          "approve-account"></label>
+      </form>
+      <button id="approve" disabled=
+        "true">approve 100 cUSDT limit
+      </button>
+    </article>
+    <article>
+      <header>
+        Transfer from (cUSDT)
+      </header>
+      <form>
+        <label>From <input type="text" id="from-account"></label>
+
+        <label>To</label> <input type="text" id=
+        "to-account">
+      </form>
+      <button id="transfer_from" disabled="true">transfer 10
+        cUSDT
+      </button>
+    </article>
+    <article>
+      <header>
+        Deploy Contract
+      </header>
+      <button id="deploy_contract" disabled=
+        "true">Deploy Contract
+      </button>
+      <footer>
+        Result: <span id="deploy_contract_result">N/A</span>
+      </footer>
+    </article>
+    <article>
+      <header>
+        Add Token
+      </header>
+      <button id="add_token" disabled="true">Add
+        Token
+      </button>
+    </article>
+    <article>
+      <header>
+        Add Network
+      </header>
+      <button id="add_network" disabled="true">Add
+        Network
+      </button>
+    </article>
+    <article>
+      <header>
+        Switch Network
+      </header>
+      <button id="switch_network" disabled="true">Switch
+        Network
+      </button>
+    </article>
+  </div>
+
+  <script src="../../dist/anyweb-js-sdk.umd.min.js"></script>
+
+  <script type="module">
+    import "./index.js";
+  </script>
+</main>
+</body>
+</html>

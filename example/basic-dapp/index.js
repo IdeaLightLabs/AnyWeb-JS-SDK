@@ -1,7 +1,7 @@
 // import js-conflux-sdk
 // more info about js-conflux-sdk
 // https://github.com/Conflux-Chain/js-conflux-sdk#readme
-import { Conflux } from 'https://cdn.skypack.dev/js-conflux-sdk'
+import { Conflux, Drip } from 'https://cdn.skypack.dev/js-conflux-sdk'
 
 const exampleContract = new Conflux().Contract({
   abi: [
@@ -302,48 +302,33 @@ const exampleContract = new Conflux().Contract({
 })
 
 const cusdtAddress = 'cfxtest:acepe88unk7fvs18436178up33hb4zkuf62a9dk1gv'
-// window.conflux = new window.TreeGraph.Conflux({
-//   url: 'https://test.confluxrpc.com', // testnet provider
-//   logger: console, // for debug: this will log all the RPC request and response to console
-//   networkId: 1, // note networkId is required to initiat
-// })
-new window.AnyWeb.Provider({
+
+// 初始化钱包
+window.conflux = new window.AnyWeb.Provider({
   appId: 'ccb32218-56d4-4765-ba97-867adad7a63c',
-})
-// async function cfxEstimateGasAndCollateralAdvance(tx) {
-//   console.log('tx', tx)
-//   const estimateRst = await window.conflux.request({
-//     method: 'cfx_estimateGasAndCollateral',
-//     params: [tx, 'latest_state'],
-//   })
-//   console.log('result', estimateRst)
-//   return estimateRst.result
-// }
+}) //
+const provider = window.conflux
+
 function getElement(id) {
   return document.getElementById(id)
 }
 
-function isFluentInstalled() {
-  return true
+function isAnyWebInstall() {
+  return window.AnyWeb !== undefined
 }
 
 async function walletInitialized() {
-  new window.AnyWeb.Provider({
-    appId: 'ccb32218-56d4-4765-ba97-867adad7a63c',
-  })
-  const provider = window.conflux
-
   // connect
   const connectButton = getElement('connect')
   const sendNativeTokenButton = getElement('send_native_token')
   const approveButton = getElement('approve')
   const transferFromButton = getElement('transfer_from')
+  const nativeReceiverAddressInput = getElement('native-receiver')
+  const countInput = getElement('native-count')
   const approveAccountInput = getElement('approve-account')
   const transferFromAccountInput = getElement('from-account')
   const transferToAccountInput = getElement('to-account')
 
-  const personalSignButton = getElement('personal_sign')
-  const typedSignButton = getElement('typed_sign')
   const addNetworkButton = getElement('add_network')
   const switchNetworkButton = getElement('switch_network')
   const addTokenButton = getElement('add_token')
@@ -355,8 +340,6 @@ async function walletInitialized() {
     sendNativeTokenButton.disabled = false
     approveButton.disabled = false
     transferFromButton.disabled = false
-    personalSignButton.disabled = false
-    typedSignButton.disabled = false
     addNetworkButton.disabled = false
     switchNetworkButton.disabled = false
     addTokenButton.disabled = false
@@ -390,11 +373,9 @@ async function walletInitialized() {
     })
   })
 
-  provider
-    .request({ method: 'wallet_getFluentMetadata' })
-    .then(({ version }) => {
-      getElement('version').innerHTML = version
-    })
+  provider.request({ method: 'anyweb_version' }).then((version) => {
+    getElement('version').innerHTML = version
+  })
 
   const [chainId, networkId, alreadyAuthedAddresses] = await Promise.all([
     provider.request({ method: 'cfx_chainId' }),
@@ -423,15 +404,15 @@ async function walletInitialized() {
       .catch((error) => console.error('error', error.message || error))
   }
 
-  // send 1 native token to the connected address
+  // send native token to the connected address
   sendNativeTokenButton.onclick = async () => {
     const [connectedAddress] = await provider.request({
       method: 'cfx_accounts',
     })
     const tx = {
       from: connectedAddress,
-      value: '0xde0b6b3a7640000',
-      to: connectedAddress,
+      value: Drip.fromCFX(countInput.value),
+      to: nativeReceiverAddressInput.value,
     }
 
     provider
@@ -454,6 +435,7 @@ async function walletInitialized() {
           approveAccountInput.value,
           100000000000000000000
         ).data,
+        gasPrice: 2,
       }
       provider
         .request({ method: 'cfx_sendTransaction', params: [tx] })
@@ -487,86 +469,6 @@ async function walletInitialized() {
     } catch (err) {
       console.log('err', err)
     }
-  }
-  // personal sign
-  personalSignButton.onclick = () => {
-    provider
-      .request({
-        method: 'personal_sign',
-        params: [
-          'personal sign message example',
-          getElement('address').innerHTML,
-        ],
-      })
-      .then((result) => {
-        getElement('personal_sign_result').innerHTML = result
-        console.log('result', result)
-      })
-      .catch(console.log)
-  }
-
-  // typed sign
-  const typedData = {
-    types: {
-      CIP23Domain: [
-        { name: 'name', type: 'string' },
-        { name: 'version', type: 'string' },
-        { name: 'chainId', type: 'uint256' },
-        { name: 'verifyingContract', type: 'address' },
-      ],
-      Person: [
-        { name: 'name', type: 'string' },
-        { name: 'wallets', type: 'address[]' },
-      ],
-      Mail: [
-        { name: 'from', type: 'Person' },
-        { name: 'to', type: 'Person[]' },
-        { name: 'contents', type: 'string' },
-      ],
-      Group: [
-        { name: 'name', type: 'string' },
-        { name: 'members', type: 'Person[]' },
-      ],
-    },
-    domain: {
-      name: 'Ether Mail',
-      version: '1',
-      chainId: 1,
-      verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
-    },
-    primaryType: 'Mail',
-    message: {
-      from: {
-        name: 'Cow',
-        wallets: [
-          '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
-          '0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF',
-        ],
-      },
-      to: [
-        {
-          name: 'Bob',
-          wallets: [
-            '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
-            '0xB0BdaBea57B0BDABeA57b0bdABEA57b0BDabEa57',
-            '0xB0B0b0b0b0b0B000000000000000000000000000',
-          ],
-        },
-      ],
-      contents: 'Hello, Bob!',
-    },
-  }
-  typedSignButton.onclick = () => {
-    provider
-      .request({
-        method: 'cfx_signTypedData_v4',
-        params: [getElement('address').innerHTML, JSON.stringify(typedData)],
-      })
-      .then((result) => {
-        getElement('typed_sign_result').innerHTML = result
-        console.log('result', result)
-      })
-      .catch(console.log)
   }
 
   // request to add network
@@ -653,27 +555,21 @@ async function walletInitialized() {
 }
 
 window.addEventListener('load', async () => {
-  if (!isFluentInstalled()) {
+  if (!isAnyWebInstall()) {
     return
   }
 
   getElement('installed').innerHTML = 'installed'
   if (window.localStorage.getItem('__FLUENT_USE_MODERN_PROVIDER_API__')) {
     getElement('installed-section').style.display = 'block'
-  } else {
-    getElement('deprecated-provider-api-warning').style.display = 'block'
   }
 
-  if (true) {
-    window.conflux
-      .request({ method: 'wallet_getFluentMetadata' })
-      .then(({ version }) => {
-        getElement('version').innerHTML = version
-      })
+  if (isAnyWebInstall()) {
+    provider.request({ method: 'anyweb_version' }).then((version) => {
+      getElement('version').innerHTML = version
+    })
     walletInitialized()
   } else {
-    alert(
-      'Fluent is not connected, please try refresh this page or restart your browser.'
-    )
+    alert('找不到AnyWeb SDK, 请检查是否正确配置')
   }
 })
