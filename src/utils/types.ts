@@ -6,3 +6,9 @@ export type ConsoleLike = Pick<
   Console,
   'log' | 'warn' | 'error' | 'debug' | 'info' | 'trace'
 >
+
+export interface IAuthResult {
+  chainId: number
+  networkId: number
+  address: string[]
+}

@@ -5,6 +5,8 @@
 import * as forge from 'node-forge'
 import axios from 'axios'
 import { API_BASE_URL, BASE_URL } from '../config'
+import { IAuthResult } from './types'
+import { Provider } from '../provider'
 
 /**
  * Check the window width to decide whether to show in full screen
@@ -104,4 +106,42 @@ export const callIframe = async (
     })
   }
   return 'ok'
+}
+
+export const readCache = (provider: Provider) => {
+  try {
+    const result = JSON.parse(
+      (window.localStorage && window.localStorage.getItem('anyweb_info')) ||
+        '{}'
+    )
+    if (
+      Object.keys(result).length > 0 &&
+      Object.keys(result).includes('address') &&
+      Object.keys(result).includes('networkId') &&
+      Object.keys(result).includes('chainId') &&
+      Object.keys(result).includes('expires') &&
+      result.expires > new Date().getTime()
+    ) {
+      provider.address = result.address
+      provider.networkId = result.networkId
+      provider.chainId = result.chainId
+    }
+  } catch (e) {
+    provider.logger.error(e)
+  }
+}
+
+export const setCache = (data: IAuthResult, provider: Provider) => {
+  window.localStorage &&
+    window.localStorage.setItem(
+      'anyweb_info',
+      JSON.stringify({
+        ...data,
+        expires: 10 * 60 * 1000 + new Date().getTime(),
+      })
+    )
+  provider.address = data.address
+  provider.networkId = data.networkId
+  provider.chainId = data.chainId
+  return data
 }

@@ -8,8 +8,8 @@ import {
   IProvider,
   IRequestArguments,
 } from './interface/provider'
-import { ConsoleLike } from './utils/types'
-import { callIframe } from './utils/common'
+import { ConsoleLike, IAuthResult } from './utils/types'
+import { callIframe, readCache, setCache } from './utils/common'
 import config from '../package.json'
 import { AddressType, getAddressType } from './utils/address'
 
@@ -22,9 +22,11 @@ import { AddressType, getAddressType } from './utils/address'
  * const provider = new Provider()
  */
 export class Provider implements IProvider {
-  protected logger: ConsoleLike
-  protected appId: string
-  protected address: string[] = []
+  logger: ConsoleLike
+  public readonly appId: string
+  address: string[] = []
+  networkId = -1
+  chainId = -1
 
   constructor({ logger, appId }: BaseProviderOptions) {
     if (!logger) {
@@ -32,17 +34,7 @@ export class Provider implements IProvider {
     }
     this.logger = logger
     this.appId = appId
-
-    try {
-      this.address =
-        JSON.parse(
-          (window.localStorage &&
-            window.localStorage.getItem('anyweb_address')) ||
-            '[]'
-        ) || []
-    } catch (e) {
-      this.logger.error(e)
-    }
+    readCache(this)
 
     // bind functions (to prevent consumers from making unbound calls)
     this.request = this.request.bind(this)
@@ -125,26 +117,28 @@ export class Provider implements IProvider {
   ): Promise<unknown> {
     switch (method) {
       case 'cfx_netVersion':
-        return 1
+        if (this.networkId === -1) {
+          return 1
+        }
+        return this.networkId
       case 'cfx_chainId':
-        return 1
+        if (this.chainId === -1) {
+          return 1
+        }
+        return this.chainId
       case 'cfx_requestAccounts':
         return this.rawRequest('cfx_accounts')
       case 'cfx_accounts':
         if (this.address.length > 0) {
           return this.address
         }
-        this.address = (await callIframe('pages/dapp/auth', {
+        const result = (await callIframe('pages/dapp/auth', {
           appId: this.appId,
           params: params ? JSON.stringify(params) : '',
           chainId: (await this.request({ method: 'cfx_chainId' })) as string,
           authType: 'account',
-        })) as string[]
-        window.localStorage &&
-          window.localStorage.setItem(
-            'anyweb_address',
-            JSON.stringify(this.address)
-          )
+        })) as IAuthResult
+        setCache(result, this)
         return this.address
       case 'cfx_sendTransaction':
         const paramsObj = params
