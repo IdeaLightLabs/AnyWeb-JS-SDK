@@ -1,7 +1,7 @@
 {
   "name": "anyweb-js-sdk",
   "description": "AnyWeb JavaScript Software Development Kit",
-  "version": "1.0.0-beta",
+  "version": "1.0.0",
   "license": "LGPL-3.0",
   "author": "yiheyang@idealight.ltd",
   "repository": "https://github.com/AnyWeb/anyweb-js-sdk.git",
