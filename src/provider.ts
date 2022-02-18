@@ -8,10 +8,16 @@ import {
   IProvider,
   IRequestArguments,
 } from './interface/provider'
-import { ConsoleLike, IAuthResult } from './utils/types'
+import {
+  IAuthResult,
+  IProviderConnectInfo,
+  IProviderRpcError,
+} from './utils/interface'
 import { callIframe, readCache, setCache } from './utils/common'
 import config from '../package.json'
 import { AddressType, getAddressType } from './utils/address'
+import { IProviderMessage } from './utils/interface'
+import { ConsoleLike } from './utils/types'
 
 /**
  * AnyWeb Provider
@@ -27,6 +33,15 @@ export class Provider implements IProvider {
   address: string[] = []
   networkId = -1
   chainId = -1
+  url = ''
+  events: {
+    onConnect?: (connectInfo: IProviderConnectInfo) => void
+    onDisconnect?: (error: IProviderRpcError) => void
+    onChainChanged?: (chainId: string) => void
+    onAccountsChanged?: (accounts: string[]) => void
+    onMessage?: (message: IProviderMessage) => void
+    onNetworkChanged?: (networkId: string) => void
+  } = {}
 
   constructor({ logger, appId }: BaseProviderOptions) {
     if (!logger) {
@@ -139,6 +154,12 @@ export class Provider implements IProvider {
           authType: 'account',
         })) as IAuthResult
         setCache(result, this)
+        this.events.onAccountsChanged &&
+          this.events.onAccountsChanged(result.address)
+        this.events.onChainChanged &&
+          this.events.onChainChanged(String(result.chainId))
+        this.events.onNetworkChanged &&
+          this.events.onNetworkChanged(String(result.networkId))
         return this.address
       case 'cfx_sendTransaction':
         const paramsObj = params
@@ -187,5 +208,27 @@ export class Provider implements IProvider {
       type,
       listener,
     })
+    switch (type) {
+      case 'connect':
+        this.events.onConnect = listener
+        break
+      case 'disconnect':
+        this.events.onDisconnect = listener
+        break
+      case 'chainChanged':
+        this.events.onChainChanged = listener
+        break
+      case 'accountsChanged':
+        this.events.onAccountsChanged = listener
+        break
+      case 'message':
+        this.events.onMessage = listener
+        break
+      case 'networkChanged':
+        this.events.onNetworkChanged = listener
+        break
+      default:
+        break
+    }
   }
 }

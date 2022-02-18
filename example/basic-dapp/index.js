@@ -361,15 +361,18 @@ async function walletInitialized() {
   }
 
   provider.on('accountsChanged', (accounts) => {
-    console.log('accountsChcanged, accounts = ', accounts)
+    console.log('accountsChanged, accounts = ', accounts)
     if (!accounts.length) return unAuthed()
     authed(accounts[0])
   })
 
   provider.on('chainChanged', (chainId) => {
+    console.log('chainChanged called', chainId)
     getElement('chainId').innerHTML = chainId
     provider.request({ method: 'cfx_netVersion' }).then((networkId) => {
-      getElement('networkId').innerHTML = networkId
+      setTimeout(() => {
+        getElement('networkId').innerHTML = networkId
+      }, 800)
     })
   })
 
