@@ -1,10 +1,13 @@
 {
-  "name": "anyweb-js-sdk",
+  "name": "@idealight-labs/anyweb-js-sdk",
   "description": "AnyWeb JavaScript Software Development Kit",
   "version": "1.0.0",
   "license": "LGPL-3.0",
-  "author": "yiheyang@idealight.ltd",
-  "repository": "https://github.com/AnyWeb/anyweb-js-sdk.git",
+  "author": "common@idealight.ltd",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IdeaLightLabs/AnyWeb-JS-SDK.git"
+  },
   "keywords": [
     "anyweb",
     "sdk"
@@ -96,7 +99,7 @@
     "lint:fix": "eslint ./src ./test --fix",
     "build": "node scripts/build-frontend.js",
     "document": "typedoc --plugin typedoc-plugin-markdown --out docs/api/ src/index.ts",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run build:lib && npm run build",
     "test": "jest --coverage",
     "build:lib": "tsc",
     "dev": "tsc --watch",
@@ -109,5 +112,14 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "bugs": {
+    "url": "https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/issues"
+  },
+  "homepage": "https://github.com/IdeaLightLabs/AnyWeb-JS-SDK#readme",
+  "directories": {
+    "example": "example",
+    "lib": "lib",
+    "test": "test"
   }
 }

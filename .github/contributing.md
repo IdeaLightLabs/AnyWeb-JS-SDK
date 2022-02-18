@@ -10,7 +10,7 @@ Hi! We're really excited that you are interested in contributing to AnyWeb. Befo
 ## Issue Reporting Guidelines
 
 - Always follow the issue template to create new issues.
-- Here is some [templates](https://github.com/Littleor/js-conflux-sdk/issues/new/choose) to report a bug, Please use it when reporting a bug.
+- Here is some [templates](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/issues/new/choose) to report a bug, Please use it when reporting a bug.
 
 ## Pull Request Guidelines
 
