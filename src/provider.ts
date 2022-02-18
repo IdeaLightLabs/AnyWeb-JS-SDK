@@ -4,19 +4,17 @@
  */
 
 import {
-  BaseProviderOptions,
-  IProvider,
-  IRequestArguments,
-} from './interface/provider'
-import {
   IAuthResult,
+  IBaseProviderOptions,
+  IProvider,
   IProviderConnectInfo,
   IProviderRpcError,
-} from './utils/interface'
+  IRequestArguments,
+  IProviderMessage,
+} from './interface/provider'
 import { callIframe, readCache, setCache } from './utils/common'
 import config from '../package.json'
 import { AddressType, getAddressType } from './utils/address'
-import { IProviderMessage } from './utils/interface'
 import { ConsoleLike } from './utils/types'
 
 /**
@@ -43,7 +41,7 @@ export class Provider implements IProvider {
     onNetworkChanged?: (networkId: string) => void
   } = {}
 
-  constructor({ logger, appId }: BaseProviderOptions) {
+  constructor({ logger, appId }: IBaseProviderOptions) {
     if (!logger) {
       logger = console
     }
@@ -57,12 +55,14 @@ export class Provider implements IProvider {
     this.send = this.call.bind(this)
     this.enable = this.enable.bind(this)
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    window.conflux = this
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    window.anyweb = this
+    if (typeof window !== 'undefined') {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      window.conflux = this
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      window.anyweb = this
+    }
   }
 
   /**

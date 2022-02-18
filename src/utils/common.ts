@@ -5,7 +5,7 @@
 import * as forge from 'node-forge'
 import axios from 'axios'
 import { API_BASE_URL, BASE_URL } from '../config'
-import { IAuthResult } from './interface'
+import { IAuthResult } from '../interface/provider'
 import { Provider } from '../provider'
 
 /**

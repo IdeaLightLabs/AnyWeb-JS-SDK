@@ -12,7 +12,7 @@ export interface IRequestArguments {
   readonly params?: readonly unknown[] | Record<string, unknown>
 }
 
-export interface BaseProviderOptions {
+export interface IBaseProviderOptions {
   logger?: ConsoleLike
   appId: string
 }
@@ -43,4 +43,31 @@ export interface IProvider {
    * @param listener {Function} callback
    */
   on(type: string, listener: (...args: any[]) => void): void
+}
+
+/**
+ * @author Littleor <me@littleor.cn>
+ * @since 2022/2/18
+ */
+
+export interface IAuthResult {
+  chainId: number
+  networkId: number
+  address: string[]
+  url: string
+}
+
+export interface IProviderRpcError extends Error {
+  message: string
+  code: number
+  data?: unknown
+}
+
+export interface IProviderConnectInfo {
+  readonly chainId: string
+}
+
+export interface IProviderMessage {
+  readonly type: string
+  readonly data: unknown
 }

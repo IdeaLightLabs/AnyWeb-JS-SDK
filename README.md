@@ -61,7 +61,7 @@ const provider = new Provider({
 
 ```html
 
-<script type="text/javascript" src="node_modules/anyweb-js-sdk/dist/anyweb-js-sdk.umd.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@idealight-labs/anyweb-js-sdk/dist/anyweb-js-sdk.umd.min.js"></script>
 <script type="text/javascript">
   const provider = new window.AnyWeb({
     logger: console,
