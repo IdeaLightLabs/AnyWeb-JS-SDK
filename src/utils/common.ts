@@ -49,7 +49,7 @@ export const callIframe = async (
   const iframe = document.createElement('iframe')
   let serialNumber = ''
   iframe.style.width = isPhone() ? '100%' : '414px'
-  iframe.style.height = isPhone() ? '100%' : '896px'
+  iframe.style.height = isPhone() ? '100%' : '736px'
   iframe.style.position = 'fixed'
   iframe.style.top = '50%'
   iframe.style.left = '50%'
@@ -138,7 +138,7 @@ export const setCache = (data: IAuthResult, provider: Provider) => {
       'anyweb_info',
       JSON.stringify({
         ...data,
-        expires: 1 * 60 * 1000 + new Date().getTime(),
+        expires: 60 * 1000 + new Date().getTime(),
       })
     )
   provider.address = data.address
