@@ -39,7 +39,7 @@ Features:
 ` npm ` 安装
 
 ```sh
-$ npm install --save anyweb-js-sdk
+$ npm install --save @idealight-labs/anyweb-js-sdk
 ```
 
 ## 引用方法
@@ -61,7 +61,7 @@ const provider = new Provider({
 
 ```html
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@idealight-labs/anyweb-js-sdk/dist/anyweb-js-sdk.umd.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@idealight-labs/anyweb-js-sdk@latest/dist/anyweb-js-sdk.umd.min.js"></script>
 <script type="text/javascript">
   const provider = new window.AnyWeb({
     logger: console,
