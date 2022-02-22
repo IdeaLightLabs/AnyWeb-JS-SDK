@@ -9,7 +9,7 @@
     "width=device-width, initial-scale=1">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="stylesheet" href=
-    "https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    "https://cdn.jsdelivr.net/npm/@picocss/pico@latest/css/pico.min.css">
   <!-- Place favicon.ico in the root directory -->
 </head>
 <body>
@@ -123,25 +123,13 @@
         Result: <span id="deploy_contract_result">N/A</span>
       </footer>
     </article>
-    <article>
-      <header>
-        Add Network
-      </header>
-      <button id="add_network" disabled="true">Add
-        Network
-      </button>
-    </article>
-    <article>
-      <header>
-        Switch Network
-      </header>
-      <button id="switch_network" disabled="true">Switch
-        Network
-      </button>
-    </article>
   </div>
 
-  <script src="../../dist/anyweb-js-sdk.umd.min.js"></script>
+  <script>
+    const now = new Date()
+    document.write(`<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/@idealight-labs/anyweb-js-sdk@latest/dist/anyweb-js-sdk.umd.min.js?v=${now
+    .getFullYear()}${now.getMonth()}${now.getDate()}'><\/script>`);
+  </script>
 
   <script type="module">
     import "./index.js";

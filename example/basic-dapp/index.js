@@ -460,7 +460,7 @@ const confluxFaucetContract = new Conflux().Contract({
 
 // 初始化钱包
 window.conflux = new window.AnyWeb.Provider({
-  appId: 'ccb32218-56d4-4765-ba97-867adad7a63c',
+  appId: '693b6401-135a-4dc3-846b-1c05ad2572f6',
 }) //
 const provider = window.conflux
 
@@ -485,20 +485,20 @@ async function walletInitialized() {
   const transferFromAccountInput = getElement('from-account')
   const transferToAccountInput = getElement('to-account')
 
-  const addNetworkButton = getElement('add_network')
-  const switchNetworkButton = getElement('switch_network')
   const deployContract = getElement('deploy_contract')
 
   function authed(address) {
+    if (!address || address === '') {
+      return unAuthed()
+    }
     getElement('address').innerHTML = address
     console.log('authed address: ', address)
     sendNativeTokenButton.disabled = false
     approveButton.disabled = false
     transferFromButton.disabled = false
-    addNetworkButton.disabled = false
-    switchNetworkButton.disabled = false
     deployContract.disabled = false
     getCFXButton.disabled = false
+    connectButton.disabled = true
   }
 
   function unAuthed() {
@@ -508,14 +508,15 @@ async function walletInitialized() {
     approveButton.disabled = true
     transferFromButton.disabled = true
     getCFXButton.disabled = true
-    addNetworkButton.disabled = true
-    switchNetworkButton.disabled = true
     deployContract.disabled = true
+    connectButton.disabled = false
   }
 
   provider.on('accountsChanged', (accounts) => {
     console.log('accountsChanged, accounts = ', accounts)
-    if (!accounts.length) return unAuthed()
+    if (!accounts || !accounts.length || accounts.length === 0) {
+      return unAuthed()
+    }
     authed(accounts[0])
   })
 
@@ -545,7 +546,11 @@ async function walletInitialized() {
   getElement('chainId').innerHTML = chainId
   getElement('networkId').innerHTML = networkId
 
-  if (!alreadyAuthedAddresses.length) {
+  if (
+    !alreadyAuthedAddresses ||
+    !alreadyAuthedAddresses.length ||
+    alreadyAuthedAddresses.length === 0
+  ) {
     unAuthed()
   } else {
     authed(alreadyAuthedAddresses[0])
@@ -557,7 +562,7 @@ async function walletInitialized() {
         method: 'cfx_requestAccounts',
       })
       .then(authed)
-      .catch((error) => console.error('error', error.message || error))
+      .catch(console.error)
   }
 
   // send native token to the connected address
@@ -592,6 +597,7 @@ async function walletInitialized() {
       provider
         .request({ method: 'cfx_sendTransaction', params: [tx] })
         .then((result) => {
+          getElement('get_cfx_result').innerHTML = result
           console.log('result', result)
         })
     } catch (err) {
@@ -647,47 +653,6 @@ async function walletInitialized() {
     }
   }
 
-  // request to add network
-  addNetworkButton.onclick = () => {
-    provider
-      .request({
-        method: 'wallet_addConfluxChain',
-        params: [
-          {
-            chainId: '0x406',
-            chainName: 'EVM Conflux',
-            nativeCurrency: {
-              name: 'Conflux',
-              symbol: 'CFX',
-              decimals: 18,
-            },
-            rpcUrls: ['http://47.104.89.179:12537'],
-            blockExplorerUrls: ['https://confluxscan.io'],
-          },
-        ],
-      })
-      .then(console.log)
-      .catch(console.log)
-  }
-
-  // request to switch network
-  switchNetworkButton.onclick = () => {
-    provider
-      .request({
-        method: 'wallet_switchConfluxChain',
-        params: [{ chainId: '0x1' }],
-      })
-      .then(() => {
-        provider
-          .request({ method: 'cfx_chainId' })
-          .then((idResult) => (getElement('chainId').innerHTML = idResult))
-        provider
-          .request({ method: 'cfx_netVersion' })
-          .then((netResult) => (getElement('networkId').innerHTML = netResult))
-      })
-      .catch(console.log)
-  }
-
   deployContract.onclick = async () => {
     try {
       const [connectedAddress] = await provider.request({
@@ -701,7 +666,7 @@ async function walletInitialized() {
       provider
         .request({ method: 'cfx_sendTransaction', params: [tx] })
         .then((result) => {
-          getElement('get_cfx_result').innerHTML = result
+          getElement('deploy_contract_result').innerHTML = result
           console.log('result', result)
         })
     } catch (err) {

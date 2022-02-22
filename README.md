@@ -60,8 +60,8 @@ const provider = new Provider({
 从 `anyweb-js-sdk` 的 `dist` 目录中进行引用 `umd` 版本.
 
 ```html
-
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@idealight-labs/anyweb-js-sdk@latest/dist/anyweb-js-sdk.umd.min.js"></script>
+
 <script type="text/javascript">
   const provider = new window.AnyWeb({
     logger: console,
