@@ -2,10 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.4](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.3...v1.0.4) (2022-02-22)
+
+
+### Bug Fixes
+
+* **optimize iframe and example DApp:** optimize the iframe experience and fix some bug in example ([d83bccc](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/d83bcccdf556f492ee397a6eb7fa2c1d1c0c5b57))
+
 ### [1.0.3](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.2...v1.0.3) (2022-02-21)
-
-### [1.0.2](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.1...v1.0.2) (2022-02-21)
-
 
 ### Features
 
