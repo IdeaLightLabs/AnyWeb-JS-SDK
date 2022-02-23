@@ -533,27 +533,31 @@ async function walletInitialized() {
   provider.request({ method: 'anyweb_version' }).then((version) => {
     getElement('version').innerHTML = version
   })
+  try {
+    const [chainId, networkId, alreadyAuthedAddresses] = await Promise.all([
+      provider.request({ method: 'cfx_chainId' }),
+      provider.request({ method: 'cfx_netVersion' }),
+      provider.request({
+        method: 'cfx_accounts',
+      }),
+    ])
 
-  const [chainId, networkId, alreadyAuthedAddresses] = await Promise.all([
-    provider.request({ method: 'cfx_chainId' }),
-    provider.request({ method: 'cfx_netVersion' }),
-    provider.request({
-      method: 'cfx_accounts',
-    }),
-  ])
+    getElement('initialized').innerHTML = 'initialized'
+    getElement('chainId').innerHTML = chainId
+    getElement('networkId').innerHTML = networkId
 
-  getElement('initialized').innerHTML = 'initialized'
-  getElement('chainId').innerHTML = chainId
-  getElement('networkId').innerHTML = networkId
-
-  if (
-    !alreadyAuthedAddresses ||
-    !alreadyAuthedAddresses.length ||
-    alreadyAuthedAddresses.length === 0
-  ) {
+    if (
+      !alreadyAuthedAddresses ||
+      !alreadyAuthedAddresses.length ||
+      alreadyAuthedAddresses.length === 0
+    ) {
+      unAuthed()
+    } else {
+      authed(alreadyAuthedAddresses[0])
+    }
+  } catch (e) {
     unAuthed()
-  } else {
-    authed(alreadyAuthedAddresses[0])
+    console.error(e)
   }
 
   connectButton.onclick = () => {
