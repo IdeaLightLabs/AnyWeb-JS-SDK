@@ -529,11 +529,11 @@ async function walletInitialized() {
       }, 800)
     })
   })
-
-  provider.request({ method: 'anyweb_version' }).then((version) => {
-    getElement('version').innerHTML = version
-  })
   try {
+    provider.request({ method: 'anyweb_version' }).then((version) => {
+      getElement('version').innerHTML = version
+    })
+
     const [chainId, networkId, alreadyAuthedAddresses] = await Promise.all([
       provider.request({ method: 'cfx_chainId' }),
       provider.request({ method: 'cfx_netVersion' }),
@@ -557,7 +557,7 @@ async function walletInitialized() {
     }
   } catch (e) {
     unAuthed()
-    console.error(e)
+    console.error('try 到错误了', e)
   }
 
   connectButton.onclick = () => {
@@ -603,6 +603,9 @@ async function walletInitialized() {
         .then((result) => {
           getElement('get_cfx_result').innerHTML = result
           console.log('result', result)
+        })
+        .catch((e) => {
+          console.error('获取CFX失败', e)
         })
     } catch (err) {
       console.log('err', err)

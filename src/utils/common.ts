@@ -64,7 +64,26 @@ const setBodyScrollable = () => {
 export const getIframe = async (
   url: string,
   onClose: () => void
-): Promise<HTMLDivElement> => {
+): Promise<{
+  root: HTMLDivElement
+  close: () => void
+}> => {
+  if (
+    document.getElementById('anyweb-iframe-mask') &&
+    document.getElementById('anyweb-iframe')
+  ) {
+    const mask = document.getElementById('anyweb-iframe-mask') as HTMLDivElement
+    const iframe = document.getElementById('anyweb-iframe') as HTMLIFrameElement
+    iframe.setAttribute('src', url)
+    mask.style.display = 'block'
+    return {
+      root: document.getElementById('anyweb-iframe-mask') as HTMLDivElement,
+      close: () => {
+        onClose()
+        mask.style.display = 'none'
+      },
+    }
+  }
   const mask = document.createElement('div')
   const div = document.createElement('div')
   const iframe = document.createElement('iframe')
@@ -139,6 +158,7 @@ export const getIframe = async (
   button.className = 'iframe-contain-button'
   iframe.className = 'iframe'
 
+  iframe.id = 'anyweb-iframe'
   mask.id = 'anyweb-iframe-mask'
 
   iframe.setAttribute('src', url)
@@ -151,13 +171,21 @@ export const getIframe = async (
   button.onclick = () => {
     setBodyScrollable()
     onClose()
-    mask.remove()
+    mask.style.display = 'none'
   }
   document.body.appendChild(style)
   setBodyNonScrollable()
   document.body.insertBefore(mask, document.body.firstElementChild)
-  return mask
+  return {
+    root: mask,
+    close: () => {
+      setBodyScrollable()
+      onClose()
+      mask.style.display = 'none'
+    },
+  }
 }
+
 export const callIframe = async (
   path: string,
   {
@@ -182,51 +210,61 @@ export const callIframe = async (
     console.error('Get serialNumber error', e)
     throw new Error('Get serialNumber error')
   }
+
   if (waitResult) {
     return new Promise<unknown>(async (resolve, reject) => {
       let timer: NodeJS.Timeout | undefined = undefined
-      const iframeContain = await getIframe(
+      const { close } = await getIframe(
         `${BASE_URL}${path}?appId=${appId}&authType=${authType}&serialNumber=${serialNumber}&hash=${hash}&random=${Math.floor(
           Math.random() * 1000
         )}&chainId=${chainId}&params=${params}&scope=${JSON.stringify(scope)}`,
         () => {
           if (timer) {
             clearTimeout(timer)
-            reject(new Error('User cancel'))
           }
         }
       )
-      const delay = 800
+      const delay = 1000
       const next = (i: number) => {
         timer = setTimeout(async () => {
+          let data
           try {
-            const data = (
+            data = (
               await axios.post(`${API_BASE_URL}/open/serial/read`, {
                 serialNumber: serialNumber,
                 hash: hash,
               })
             ).data.data
-            if (data && data !== 'false' && data !== false) {
-              timer && clearTimeout(timer)
-              iframeContain.remove()
-              setBodyScrollable()
-              resolve(JSON.parse(data))
-            } else {
-              if (i * delay > 10 * 60 * 1000) {
-                iframeContain.remove()
-                setBodyScrollable()
-                reject(new Error('Timeout'))
-              }
-              next(i++)
-            }
           } catch (e) {
             console.error("Can't get result from iframe", e)
+            next(i++)
+            return
+            // reject(new Error("Can't get result from iframe"))
+          }
+          if (data && data !== 'false' && data !== false) {
+            timer && clearTimeout(timer)
+            close()
+            resolve(JSON.parse(data))
+          } else {
+            if (i * delay > 10 * 60 * 1000) {
+              close()
+              reject(new Error('Timeout'))
+            }
+            next(i++)
           }
         }, delay)
       }
       next(0)
     })
   }
+  await getIframe(
+    `${BASE_URL}${path}?appId=${appId}&authType=${authType}&serialNumber=${serialNumber}&hash=${hash}&random=${Math.floor(
+      Math.random() * 1000
+    )}&chainId=${chainId}&params=${params}&scope=${JSON.stringify(scope)}`,
+    () => {
+      return
+    }
+  )
   return 'ok'
 }
 

@@ -12,5 +12,11 @@ export enum AddressType {
  * @param address
  */
 export const getAddressType = (address: string): AddressType => {
-  return decode(address).type as AddressType
+  const decodeResult = decode(address)
+  console.log('decodeResult', decodeResult)
+  if (Object.keys(decodeResult).includes('type')) {
+    return decodeResult.type as AddressType
+  } else {
+    return AddressType.USER
+  }
 }

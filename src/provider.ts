@@ -167,17 +167,23 @@ export class Provider implements IProvider {
             ? params[0]
             : params
           : {}
-        return await callIframe('pages/dapp/auth', {
-          appId: this.appId,
-          chainId: (await this.request({ method: 'cfx_chainId' })) as string,
-          params: params ? JSON.stringify(paramsObj) : '',
-          authType:
-            params && Object.keys(paramsObj).includes('to') && paramsObj['to']
-              ? getAddressType(paramsObj['to']) === AddressType.CONTRACT
-                ? 'callContract'
-                : 'createTransaction'
-              : 'createContract',
-        })
+        try {
+          return await callIframe('pages/dapp/auth', {
+            appId: this.appId,
+            chainId: (await this.request({ method: 'cfx_chainId' })) as string,
+            params: params ? JSON.stringify(paramsObj) : '',
+            authType:
+              params && Object.keys(paramsObj).includes('to') && paramsObj['to']
+                ? getAddressType(paramsObj['to']) === AddressType.CONTRACT
+                  ? 'callContract'
+                  : 'createTransaction'
+                : 'createContract',
+          })
+        } catch (e) {
+          console.error('Error to sendTransaction', e)
+          return 'fail'
+        }
+
       case 'anyweb_version':
         return config.version
       case 'anyweb_home':
