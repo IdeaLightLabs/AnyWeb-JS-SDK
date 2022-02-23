@@ -36,6 +36,10 @@ export interface IIframeOptions {
 
 const setBodyNonScrollable = () => {
   document.body.style.overflow = 'hidden'
+  const scrollTop =
+    document.body.scrollTop || document.documentElement.scrollTop
+  document.body.style.cssText +=
+    'position:fixed;width:100%;top:-' + scrollTop + 'px;'
   document.addEventListener(
     'touchmove',
     (e) => {
@@ -47,6 +51,11 @@ const setBodyNonScrollable = () => {
 
 const setBodyScrollable = () => {
   document.body.style.overflow = ''
+  document.body.style.position = ''
+  const top = document.body.style.top
+  document.body.scrollTop = document.documentElement.scrollTop = -parseInt(top)
+  document.body.style.top = ''
+
   document.removeEventListener('touchmove', (e) => {
     e.stopPropagation()
   })
