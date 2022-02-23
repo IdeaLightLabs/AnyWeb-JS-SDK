@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.5](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.4...v1.0.5) (2022-02-23)
+
+
+### Bug Fixes
+
+* **iOS scroll penetration:** fix the iOS scroll penetration and remove the release.yml ([eb4d4ce](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/eb4d4ce538543df97fd8064b1b2043688091ffb9))
+* **safari page auto reload:** fixed Safari auto refresh and other issues ([b83ca43](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/b83ca4351684edaac8d13ca79afab6455b4a1ca5))
+* **user cancel error:** fix the error of cancel auth, and optimize DApp interactive experience ([fafbd47](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/fafbd47e8c8ea8e4463f7149abfe627fb8127c21))
+
 ### [1.0.4](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.3...v1.0.4) (2022-02-22)
 
 
