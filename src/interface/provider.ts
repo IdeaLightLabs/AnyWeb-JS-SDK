@@ -71,3 +71,12 @@ export interface IProviderMessage {
   readonly type: string
   readonly data: unknown
 }
+
+export interface IIframeOptions {
+  appId: string
+  params: string
+  chainId: string
+  scope?: number[]
+  authType?: 'account' | 'createContract' | 'callContract' | 'createTransaction'
+  waitResult?: boolean
+}

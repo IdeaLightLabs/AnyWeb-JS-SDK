@@ -5,7 +5,7 @@
 import * as forge from 'node-forge'
 import axios from 'axios'
 import { API_BASE_URL, BASE_URL } from '../config'
-import { IAuthResult } from '../interface/provider'
+import { IAuthResult, IIframeOptions } from '../interface/provider'
 import { Provider } from '../provider'
 
 /**
@@ -23,15 +23,6 @@ export function sha512(str: string) {
   const md = forge.md.sha512.create()
   md.update(str)
   return md.digest().toHex()
-}
-
-export interface IIframeOptions {
-  appId: string
-  params: string
-  chainId: string
-  scope?: number[]
-  authType?: 'account' | 'createContract' | 'callContract' | 'createTransaction'
-  waitResult?: boolean
 }
 
 const setBodyNonScrollable = () => {
@@ -61,13 +52,15 @@ const setBodyScrollable = () => {
   })
 }
 
+const closeIframe = (root: HTMLDivElement) => {
+  setBodyScrollable()
+  root.style.display = 'none'
+}
+
 export const getIframe = async (
   url: string,
   onClose: () => void
-): Promise<{
-  root: HTMLDivElement
-  close: () => void
-}> => {
+): Promise<() => void> => {
   if (
     document.getElementById('anyweb-iframe-mask') &&
     document.getElementById('anyweb-iframe')
@@ -76,12 +69,10 @@ export const getIframe = async (
     const iframe = document.getElementById('anyweb-iframe') as HTMLIFrameElement
     iframe.setAttribute('src', url)
     mask.style.display = 'block'
-    return {
-      root: document.getElementById('anyweb-iframe-mask') as HTMLDivElement,
-      close: () => {
-        onClose()
-        mask.style.display = 'none'
-      },
+    setBodyNonScrollable()
+    return () => {
+      onClose()
+      closeIframe(mask)
     }
   }
   const mask = document.createElement('div')
@@ -176,13 +167,9 @@ export const getIframe = async (
   document.body.appendChild(style)
   setBodyNonScrollable()
   document.body.insertBefore(mask, document.body.firstElementChild)
-  return {
-    root: mask,
-    close: () => {
-      setBodyScrollable()
-      onClose()
-      mask.style.display = 'none'
-    },
+  return () => {
+    onClose()
+    closeIframe(mask)
   }
 }
 
@@ -214,7 +201,7 @@ export const callIframe = async (
   if (waitResult) {
     return new Promise<unknown>(async (resolve, reject) => {
       let timer: NodeJS.Timeout | undefined = undefined
-      const { close } = await getIframe(
+      const close = await getIframe(
         `${BASE_URL}${path}?appId=${appId}&authType=${authType}&serialNumber=${serialNumber}&hash=${hash}&random=${Math.floor(
           Math.random() * 1000
         )}&chainId=${chainId}&params=${params}&scope=${JSON.stringify(scope)}`,
