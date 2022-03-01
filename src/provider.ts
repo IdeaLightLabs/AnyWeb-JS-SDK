@@ -8,9 +8,9 @@ import {
   IBaseProviderOptions,
   IProvider,
   IProviderConnectInfo,
+  IProviderMessage,
   IProviderRpcError,
   IRequestArguments,
-  IProviderMessage,
 } from './interface/provider'
 import { callIframe, readCache, setCache } from './utils/common'
 import config from '../package.json'
@@ -130,6 +130,11 @@ export class Provider implements IProvider {
     method: string,
     params?: readonly unknown[] | Record<string, unknown>
   ): Promise<unknown> {
+    const paramsObj = params
+      ? Array.isArray(params) && params.length > 0
+        ? params[0]
+        : params
+      : {}
     switch (method) {
       case 'cfx_netVersion':
         if (this.networkId === -1) {
@@ -162,11 +167,6 @@ export class Provider implements IProvider {
           this.events.onNetworkChanged(String(result.networkId))
         return this.address
       case 'cfx_sendTransaction':
-        const paramsObj = params
-          ? Array.isArray(params) && params.length > 0
-            ? params[0]
-            : params
-          : {}
         try {
           return await callIframe('pages/dapp/auth', {
             appId: this.appId,
@@ -183,7 +183,18 @@ export class Provider implements IProvider {
           console.error('Error to sendTransaction', e)
           return 'fail'
         }
-
+      case 'anyweb_importAddress':
+        try {
+          return await callIframe('pages/dapp/auth', {
+            appId: this.appId,
+            chainId: (await this.request({ method: 'cfx_chainId' })) as string,
+            params: params ? JSON.stringify(paramsObj) : JSON.stringify([]),
+            authType: 'importAddress',
+          })
+        } catch (e) {
+          console.error('Error to import Address', e)
+          return 'fail'
+        }
       case 'anyweb_version':
         return config.version
       case 'anyweb_home':

@@ -77,6 +77,11 @@ export interface IIframeOptions {
   params: string
   chainId: string
   scope?: number[]
-  authType?: 'account' | 'createContract' | 'callContract' | 'createTransaction'
+  authType?:
+    | 'account'
+    | 'createContract'
+    | 'callContract'
+    | 'createTransaction'
+    | 'importAddress'
   waitResult?: boolean
 }

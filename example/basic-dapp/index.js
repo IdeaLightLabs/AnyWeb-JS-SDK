@@ -479,11 +479,13 @@ async function walletInitialized() {
   const approveButton = getElement('approve')
   const transferFromButton = getElement('transfer_from')
   const getCFXButton = getElement('get-cfx')
+  const importAddressButton = getElement('import_address_button')
   const nativeReceiverAddressInput = getElement('native-receiver')
   const countInput = getElement('native-count')
   const approveAccountInput = getElement('approve-account')
   const transferFromAccountInput = getElement('from-account')
   const transferToAccountInput = getElement('to-account')
+  const importAddressInput = getElement('import_address_input')
 
   const deployContract = getElement('deploy_contract')
 
@@ -499,6 +501,7 @@ async function walletInitialized() {
     deployContract.disabled = false
     getCFXButton.disabled = false
     connectButton.disabled = true
+    importAddressButton.disabled = false
   }
 
   function unAuthed() {
@@ -510,6 +513,7 @@ async function walletInitialized() {
     getCFXButton.disabled = true
     deployContract.disabled = true
     connectButton.disabled = false
+    importAddressButton.disabled = true
   }
 
   provider.on('accountsChanged', (accounts) => {
@@ -674,6 +678,26 @@ async function walletInitialized() {
         .request({ method: 'cfx_sendTransaction', params: [tx] })
         .then((result) => {
           getElement('deploy_contract_result').innerHTML = result
+          console.log('result', result)
+        })
+    } catch (err) {
+      console.log('err', err)
+    }
+  }
+
+  importAddressButton.onclick = async () => {
+    try {
+      const [connectedAddress] = await provider.request({
+        method: 'cfx_accounts',
+      })
+
+      const tx = {
+        address: importAddressInput.value.split(','),
+      }
+      provider
+        .request({ method: 'anyweb_importAddress', params: [tx] })
+        .then((result) => {
+          getElement('import_address_result').innerHTML = result
           console.log('result', result)
         })
     } catch (err) {
