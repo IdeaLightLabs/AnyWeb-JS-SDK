@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.6](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.5...v1.0.6) (2022-03-02)
+
+
+### Features
+
+* **support import read-only account:** support import account from DApp by SDK without key ([7562c1f](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/7562c1f03a7494022acc419389713de0ae93a710))
+
+
+### Bug Fixes
+
+* **rolling penetration:** fixed rolling penetration when open the iframe second time ([2f91490](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/2f91490306420238ae006d7f1393b850f06ccc8a))
+
 ### [1.0.5](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.4...v1.0.5) (2022-02-23)
 
 
