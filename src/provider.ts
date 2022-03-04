@@ -183,13 +183,13 @@ export class Provider implements IProvider {
           console.error('Error to sendTransaction', e)
           return 'fail'
         }
-      case 'anyweb_importAddress':
+      case 'anyweb_importAccount':
         try {
           return await callIframe('pages/dapp/auth', {
             appId: this.appId,
             chainId: (await this.request({ method: 'cfx_chainId' })) as string,
             params: params ? JSON.stringify(paramsObj) : JSON.stringify([]),
-            authType: 'importAddress',
+            authType: 'importAccount',
           })
         } catch (e) {
           console.error('Error to import Address', e)

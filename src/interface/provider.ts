@@ -82,6 +82,6 @@ export interface IIframeOptions {
     | 'createContract'
     | 'callContract'
     | 'createTransaction'
-    | 'importAddress'
+    | 'importAccount'
   waitResult?: boolean
 }

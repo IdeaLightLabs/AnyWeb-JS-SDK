@@ -480,12 +480,14 @@ async function walletInitialized() {
   const transferFromButton = getElement('transfer_from')
   const getCFXButton = getElement('get-cfx')
   const importAddressButton = getElement('import_address_button')
+  const importPrivateKeyButton = getElement('import_private_key_button')
   const nativeReceiverAddressInput = getElement('native-receiver')
   const countInput = getElement('native-count')
   const approveAccountInput = getElement('approve-account')
   const transferFromAccountInput = getElement('from-account')
   const transferToAccountInput = getElement('to-account')
   const importAddressInput = getElement('import_address_input')
+  const importPrivateKeyInput = getElement('import_private_key_input')
 
   const deployContract = getElement('deploy_contract')
 
@@ -502,6 +504,7 @@ async function walletInitialized() {
     getCFXButton.disabled = false
     connectButton.disabled = true
     importAddressButton.disabled = false
+    importPrivateKeyButton.disabled = false
   }
 
   function unAuthed() {
@@ -514,6 +517,7 @@ async function walletInitialized() {
     deployContract.disabled = true
     connectButton.disabled = false
     importAddressButton.disabled = true
+    importPrivateKeyButton.disabled = true
   }
 
   provider.on('accountsChanged', (accounts) => {
@@ -687,17 +691,29 @@ async function walletInitialized() {
 
   importAddressButton.onclick = async () => {
     try {
-      const [connectedAddress] = await provider.request({
-        method: 'cfx_accounts',
-      })
-
       const tx = {
-        address: importAddressInput.value.split(','),
+        address: importAddressInput.value.replace(/\s+/g, '').split(','),
       }
       provider
-        .request({ method: 'anyweb_importAddress', params: [tx] })
+        .request({ method: 'anyweb_importAccount', params: [tx] })
         .then((result) => {
           getElement('import_address_result').innerHTML = result
+          console.log('result', result)
+        })
+    } catch (err) {
+      console.log('err', err)
+    }
+  }
+
+  importPrivateKeyButton.onclick = async () => {
+    try {
+      const tx = {
+        privateKey: importPrivateKeyInput.value.replace(/\s+/g, '').split(','),
+      }
+      provider
+        .request({ method: 'anyweb_importAccount', params: [tx] })
+        .then((result) => {
+          getElement('import_private_key_result').innerHTML = result
           console.log('result', result)
         })
     } catch (err) {
