@@ -8,6 +8,22 @@ import { API_BASE_URL, BASE_URL } from '../config'
 import { IAuthResult, IIframeOptions } from '../interface/provider'
 import { Provider } from '../provider'
 
+export const getFrameWidth = () => {
+  if (window.innerHeight < 736) {
+    return ((window.innerHeight - 18) * 9.0) / 16.0
+  } else {
+    return 414
+  }
+}
+
+export const getFrameHeight = () => {
+  if (window.innerHeight < 736) {
+    return window.innerHeight - 18
+  } else {
+    return 736
+  }
+}
+
 /**
  * Check the window width to decide whether to show in full screen
  */
@@ -97,8 +113,8 @@ export const getIframe = async (
     z-index: 999999999;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     border-radius: ${isFullScreen() ? '0' : '15px'};
-    width: ${isFullScreen() ? '100%' : '414px'};
-    height: ${isFullScreen() ? '100%' : '736px'};
+    width: ${isFullScreen() ? '100%' : `${getFrameWidth()}px`};
+    height: ${isFullScreen() ? '100%' : `${getFrameHeight()}px`};
     transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;

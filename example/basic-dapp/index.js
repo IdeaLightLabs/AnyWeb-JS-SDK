@@ -690,6 +690,10 @@ async function walletInitialized() {
   }
 
   importAddressButton.onclick = async () => {
+    if (importAddressInput.value.replace(/\s+/g, '') === '') {
+      getElement('import_address_result').innerHTML = 'valid Params'
+      return
+    }
     try {
       const tx = {
         address: importAddressInput.value.replace(/\s+/g, '').split(','),
@@ -706,6 +710,10 @@ async function walletInitialized() {
   }
 
   importPrivateKeyButton.onclick = async () => {
+    if (importPrivateKeyInput.value.replace(/\s+/g, '') === '') {
+      getElement('import_private_key_result').innerHTML = 'valid Params'
+      return
+    }
     try {
       const tx = {
         privateKey: importPrivateKeyInput.value.replace(/\s+/g, '').split(','),
