@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.7](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.6...v1.0.7) (2022-03-07)
+
+
+### Features
+
+* **support import privateKey:** support import account from DApp by SDK with privateKey ([6f85079](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/6f85079a1597d669d2cecc89889be5f69e4e7d1c))
+
+
+### Bug Fixes
+
+* **height overrun:**  fixed height overrun and error import problems ([4aacc8e](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/4aacc8ee7be7f02d29345ee7a97ac48ff83dbdd8))
+
 ### [1.0.6](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.5...v1.0.6) (2022-03-02)
 
 
