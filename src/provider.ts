@@ -174,14 +174,15 @@ export class Provider implements IProvider {
             params: params ? JSON.stringify(paramsObj) : '',
             authType:
               params && Object.keys(paramsObj).includes('to') && paramsObj['to']
-                ? getAddressType(paramsObj['to']) === AddressType.CONTRACT
+                ? getAddressType(paramsObj['to'] as string) ===
+                  AddressType.CONTRACT
                   ? 'callContract'
                   : 'createTransaction'
                 : 'createContract',
           })
         } catch (e) {
           console.error('Error to sendTransaction', e)
-          return 'fail'
+          return e
         }
       case 'anyweb_importAccount':
         try {
@@ -193,7 +194,7 @@ export class Provider implements IProvider {
           })
         } catch (e) {
           console.error('Error to import Address', e)
-          return 'fail'
+          return e
         }
       case 'anyweb_version':
         return config.version
@@ -209,7 +210,7 @@ export class Provider implements IProvider {
           waitResult: false,
         })
       default:
-        return 'default'
+        return 'Unsupported method'
     }
   }
 

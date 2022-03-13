@@ -85,3 +85,9 @@ export interface IIframeOptions {
     | 'importAccount'
   waitResult?: boolean
 }
+
+export interface IIframeData {
+  type: 'event' | 'callback' | 'router' | 'default'
+  data: unknown
+  success?: boolean
+}

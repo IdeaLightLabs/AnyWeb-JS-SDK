@@ -2310,13 +2310,6 @@
   "resolved" "https://registry.npmmirror.com/atob/download/atob-2.1.2.tgz"
   "version" "2.1.2"
 
-"axios@^0.25.0":
-  "integrity" "sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g=="
-  "resolved" "https://registry.npmmirror.com/axios/-/axios-0.25.0.tgz"
-  "version" "0.25.0"
-  dependencies:
-    "follow-redirects" "^1.14.7"
-
 "babel-jest@^27.4.6":
   "version" "26.6.3"
   dependencies:
@@ -4469,11 +4462,6 @@
   "integrity" "sha512-8/sOawo8tJ4QOBX8YlQBMxL8+RLZfxMQOif9o0KUKTNTjMYElWPE0r/m5VNFxTRd0NSw8qSy8dajrwX4RYI1Hw=="
   "resolved" "https://registry.npmmirror.com/flatted/download/flatted-3.2.4.tgz?cache=0&sync_timestamp=1636473899515&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fflatted%2Fdownload%2Fflatted-3.2.4.tgz"
   "version" "3.2.4"
-
-"follow-redirects@^1.14.7":
-  "integrity" "sha512-1x0S9UVJHsQprFcEC/qnNzBLcIxsjAV905f/UkQxbclCsoTWlacCNOpQa/anodLl2uaEKFhfWOvM2Qg77+15zA=="
-  "resolved" "https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.14.8.tgz"
-  "version" "1.14.8"
 
 "for-in@^1.0.2":
   "integrity" "sha1-gQaNKVqBQuwKxybG4iAMMPttXoA="

@@ -3,9 +3,8 @@
  * @since 2022/2/11
  */
 import * as forge from 'node-forge'
-import axios from 'axios'
-import { API_BASE_URL, BASE_URL } from '../config'
-import { IAuthResult, IIframeOptions } from '../interface/provider'
+import { BASE_URL } from '../config'
+import { IAuthResult, IIframeData, IIframeOptions } from '../interface/provider'
 import { Provider } from '../provider'
 
 export const getFrameWidth = () => {
@@ -68,9 +67,37 @@ const setBodyScrollable = () => {
   })
 }
 
+export const isObject = (obj: unknown) => {
+  return Object.prototype.toString.call(obj) === '[object Object]'
+}
+
 const closeIframe = (root: HTMLDivElement) => {
   setBodyScrollable()
   root.style.display = 'none'
+}
+export const sendMessageToApp = ({
+  data,
+  type,
+  success = true,
+}: IIframeData) => {
+  const iframe: HTMLIFrameElement | null = document.getElementById(
+    'anyweb-iframe'
+  ) as HTMLIFrameElement | null
+  if (!iframe) {
+    return
+  }
+  iframe.contentWindow &&
+    iframe.contentWindow.postMessage(
+      {
+        data: {
+          data,
+          type,
+          success,
+        },
+        type: 'anyweb',
+      },
+      '*'
+    )
 }
 
 export const getIframe = async (
@@ -82,8 +109,13 @@ export const getIframe = async (
     document.getElementById('anyweb-iframe')
   ) {
     const mask = document.getElementById('anyweb-iframe-mask') as HTMLDivElement
-    const iframe = document.getElementById('anyweb-iframe') as HTMLIFrameElement
-    iframe.setAttribute('src', url)
+    sendMessageToApp({
+      type: 'router',
+      data: {
+        path: `/${url}`,
+        mode: 'redirectTo',
+      },
+    })
     mask.style.display = 'block'
     setBodyNonScrollable()
     return () => {
@@ -168,7 +200,7 @@ export const getIframe = async (
   iframe.id = 'anyweb-iframe'
   mask.id = 'anyweb-iframe-mask'
 
-  iframe.setAttribute('src', url)
+  iframe.setAttribute('src', `${BASE_URL}${url}`)
   iframe.setAttribute('frameborder', '0')
   iframe.setAttribute('scrolling', 'no')
 
@@ -200,25 +232,11 @@ export const callIframe = async (
     waitResult = true,
   }: IIframeOptions
 ) => {
-  let serialNumber = ''
-  const hash = sha512(JSON.stringify({ appId, params }))
-
-  try {
-    serialNumber = (
-      await axios.post(`${API_BASE_URL}/open/serial/create`, {
-        hash: hash,
-      })
-    ).data.data.serialNumber
-  } catch (e) {
-    console.error('Get serialNumber error', e)
-    throw new Error('Get serialNumber error')
-  }
-
   if (waitResult) {
     return new Promise<unknown>(async (resolve, reject) => {
-      let timer: NodeJS.Timeout | undefined = undefined
+      let callback: IIframeData | undefined = undefined
       const close = await getIframe(
-        `${BASE_URL}${path}?appId=${appId}&authType=${authType}&serialNumber=${serialNumber}&hash=${hash}&random=${Math.floor(
+        `${path}?appId=${appId}&authType=${authType}&random=${Math.floor(
           Math.random() * 1000
         )}&chainId=${chainId}&params=${params}&scope=${JSON.stringify(scope)}`,
         () => {
@@ -227,48 +245,54 @@ export const callIframe = async (
           }
         }
       )
-      const delay = 1000
-      const next = (i: number) => {
-        timer = setTimeout(async () => {
-          let data
-          try {
-            data = (
-              await axios.post(`${API_BASE_URL}/open/serial/read`, {
-                serialNumber: serialNumber,
-                hash: hash,
-              })
-            ).data.data
-          } catch (e) {
-            console.error("Can't get result from iframe", e)
-            next(i++)
-            return
-            // reject(new Error("Can't get result from iframe"))
-          }
-          if (data && data !== 'false' && data !== false) {
-            timer && clearTimeout(timer)
-            close()
-            resolve(JSON.parse(data))
-          } else {
-            if (i * delay > 10 * 60 * 1000) {
-              close()
-              reject(new Error('Timeout'))
+      const timer = setTimeout(() => {
+        close()
+        reject(new Error('Timeout'))
+      }, 10 * 60 * 1000)
+
+      // Set Listeners
+      window.addEventListener(
+        'message',
+        function receiveMessageFromIframePage(event) {
+          if (
+            event.data &&
+            isObject(event.data) &&
+            'type' in event.data &&
+            event.data.type === 'anyweb'
+          ) {
+            console.log('SDK收到子页面信息: ', event.data)
+            callback = event.data.data as IIframeData
+
+            if (callback.type === 'callback') {
+              window.removeEventListener(
+                'message',
+                receiveMessageFromIframePage
+              )
+              clearTimeout(timer)
+              if (callback.success) {
+                close()
+                resolve(callback.data)
+              } else {
+                close()
+                reject(new Error(callback.data as string))
+              }
             }
-            next(i++)
           }
-        }, delay)
-      }
-      next(0)
+        },
+        false
+      )
     })
+  } else {
+    await getIframe(
+      `${path}?appId=${appId}&authType=${authType}&random=${Math.floor(
+        Math.random() * 1000
+      )}&chainId=${chainId}&params=${params}&scope=${JSON.stringify(scope)}`,
+      () => {
+        return
+      }
+    )
+    return 'ok'
   }
-  await getIframe(
-    `${BASE_URL}${path}?appId=${appId}&authType=${authType}&serialNumber=${serialNumber}&hash=${hash}&random=${Math.floor(
-      Math.random() * 1000
-    )}&chainId=${chainId}&params=${params}&scope=${JSON.stringify(scope)}`,
-    () => {
-      return
-    }
-  )
-  return 'ok'
 }
 
 export const readCache = (provider: Provider) => {
