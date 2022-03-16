@@ -547,6 +547,11 @@ async function walletInitialized() {
       provider.request({ method: 'cfx_netVersion' }),
       provider.request({
         method: 'cfx_accounts',
+        params: [
+          {
+            availableNetwork: [1, 1029],
+          },
+        ],
       }),
     ])
 
@@ -599,6 +604,11 @@ async function walletInitialized() {
     try {
       const [connectedAddress] = await provider.request({
         method: 'cfx_accounts',
+        params: [
+          {
+            availableNetwork: [1],
+          },
+        ],
       })
       const tx = {
         from: connectedAddress,
