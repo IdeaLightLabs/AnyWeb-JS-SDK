@@ -152,12 +152,17 @@ export class Provider implements IProvider {
         if (this.address.length > 0) {
           return this.address
         }
-        const result = (await callIframe('pages/dapp/auth', {
-          appId: this.appId,
-          params: params ? JSON.stringify(params) : '',
-          chainId: (await this.request({ method: 'cfx_chainId' })) as string,
-          authType: 'account',
-        })) as IAuthResult
+        console.log('cfx_accounts参数', paramsObj)
+        const result = (await callIframe(
+          'pages/dapp/auth',
+          {
+            appId: this.appId,
+            params: params ? JSON.stringify(paramsObj) : '',
+            chainId: (await this.request({ method: 'cfx_chainId' })) as string,
+            authType: 'account',
+          },
+          this
+        )) as IAuthResult
         setCache(result, this)
         this.events.onAccountsChanged &&
           this.events.onAccountsChanged(result.address)
@@ -168,30 +173,44 @@ export class Provider implements IProvider {
         return this.address
       case 'cfx_sendTransaction':
         try {
-          return await callIframe('pages/dapp/auth', {
-            appId: this.appId,
-            chainId: (await this.request({ method: 'cfx_chainId' })) as string,
-            params: params ? JSON.stringify(paramsObj) : '',
-            authType:
-              params && Object.keys(paramsObj).includes('to') && paramsObj['to']
-                ? getAddressType(paramsObj['to'] as string) ===
-                  AddressType.CONTRACT
-                  ? 'callContract'
-                  : 'createTransaction'
-                : 'createContract',
-          })
+          return await callIframe(
+            'pages/dapp/auth',
+            {
+              appId: this.appId,
+              chainId: (await this.request({
+                method: 'cfx_chainId',
+              })) as string,
+              params: params ? JSON.stringify(paramsObj) : '',
+              authType:
+                params &&
+                Object.keys(paramsObj).includes('to') &&
+                paramsObj['to']
+                  ? getAddressType(paramsObj['to'] as string) ===
+                    AddressType.CONTRACT
+                    ? 'callContract'
+                    : 'createTransaction'
+                  : 'createContract',
+            },
+            this
+          )
         } catch (e) {
           console.error('Error to sendTransaction', e)
           return e
         }
       case 'anyweb_importAccount':
         try {
-          return await callIframe('pages/dapp/auth', {
-            appId: this.appId,
-            chainId: (await this.request({ method: 'cfx_chainId' })) as string,
-            params: params ? JSON.stringify(paramsObj) : JSON.stringify([]),
-            authType: 'importAccount',
-          })
+          return await callIframe(
+            'pages/dapp/auth',
+            {
+              appId: this.appId,
+              chainId: (await this.request({
+                method: 'cfx_chainId',
+              })) as string,
+              params: params ? JSON.stringify(paramsObj) : JSON.stringify([]),
+              authType: 'importAccount',
+            },
+            this
+          )
         } catch (e) {
           console.error('Error to import Address', e)
           return e
@@ -199,16 +218,16 @@ export class Provider implements IProvider {
       case 'anyweb_version':
         return config.version
       case 'anyweb_home':
-        return await callIframe('pages/index/home', {
-          appId: this.appId,
-          chainId: (await this.request({ method: 'cfx_chainId' })) as string,
-          params: params
-            ? JSON.stringify(
-                Array.isArray(params) && params.length > 0 ? params[0] : params
-              )
-            : '',
-          waitResult: false,
-        })
+        return await callIframe(
+          'pages/index/home',
+          {
+            appId: this.appId,
+            chainId: (await this.request({ method: 'cfx_chainId' })) as string,
+            params: params ? JSON.stringify(paramsObj) : '',
+            waitResult: false,
+          },
+          this
+        )
       default:
         return 'Unsupported method'
     }

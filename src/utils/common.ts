@@ -4,7 +4,12 @@
  */
 import * as forge from 'node-forge'
 import { BASE_URL } from '../config'
-import { IAuthResult, IIframeData, IIframeOptions } from '../interface/provider'
+import {
+  IAuthResult,
+  IIframeData,
+  IIframeEventData,
+  IIframeOptions,
+} from '../interface/provider'
 import { Provider } from '../provider'
 
 export const getFrameWidth = () => {
@@ -230,7 +235,8 @@ export const callIframe = async (
     scope = [2],
     authType,
     waitResult = true,
-  }: IIframeOptions
+  }: IIframeOptions,
+  provider: Provider
 ) => {
   if (waitResult) {
     return new Promise<unknown>(async (resolve, reject) => {
@@ -275,6 +281,20 @@ export const callIframe = async (
               } else {
                 close()
                 reject(new Error(callback.data as string))
+              }
+            } else if (callback.type === 'event') {
+              const eventData = callback.data as IIframeEventData
+              switch (eventData.type) {
+                case 'changeNetwork':
+                  provider.events.onNetworkChanged &&
+                    provider.events.onNetworkChanged(String(eventData.data))
+                  break
+                case 'changeChain':
+                  provider.events.onChainChanged &&
+                    provider.events.onChainChanged(String(eventData.data))
+                  break
+                default:
+                  break
               }
             }
           }

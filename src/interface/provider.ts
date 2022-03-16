@@ -91,3 +91,8 @@ export interface IIframeData {
   data: unknown
   success?: boolean
 }
+
+export interface IIframeEventData {
+  type: 'changeNetwork' | 'changeChain'
+  data: unknown
+}
