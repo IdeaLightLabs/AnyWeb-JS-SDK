@@ -327,12 +327,14 @@ export const readCache = (provider: Provider) => {
       Object.keys(result).includes('networkId') &&
       Object.keys(result).includes('chainId') &&
       Object.keys(result).includes('expires') &&
+      Object.keys(result).includes('oauthToken') &&
       result.expires > new Date().getTime()
     ) {
       provider.address = result.address
       provider.networkId = result.networkId
       provider.chainId = result.chainId
       provider.url = result.url
+      provider.oauthToken = result.oauthToken
     }
   } catch (e) {
     provider.logger.error(e)
@@ -352,5 +354,6 @@ export const setCache = (data: IAuthResult, provider: Provider) => {
   provider.networkId = data.networkId || provider.networkId
   provider.chainId = data.chainId || provider.chainId
   provider.url = data.url
+  provider.oauthToken = data.oauthToken || provider.oauthToken
   return data
 }

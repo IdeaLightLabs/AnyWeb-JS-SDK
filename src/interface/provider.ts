@@ -55,6 +55,7 @@ export interface IAuthResult {
   networkId: number
   address: string[]
   url: string
+  oauthToken: string
 }
 
 export interface IProviderRpcError extends Error {

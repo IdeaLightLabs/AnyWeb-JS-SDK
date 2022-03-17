@@ -29,6 +29,7 @@ export class Provider implements IProvider {
   logger: ConsoleLike
   public readonly appId: string
   address: string[] = []
+  oauthToken?: string = undefined
   networkId = -1
   chainId = -1
   url = ''
@@ -217,6 +218,11 @@ export class Provider implements IProvider {
         }
       case 'anyweb_version':
         return config.version
+      case 'anyweb_oauth':
+        if (this.oauthToken) {
+          return this.oauthToken
+        }
+        throw new Error('Get oauth token failed: get account address first')
       case 'anyweb_home':
         return await callIframe(
           'pages/index/home',
