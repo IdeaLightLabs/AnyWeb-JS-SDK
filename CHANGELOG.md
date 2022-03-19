@@ -2,9 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [1.0.8](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.7...v1.0.8) (2022-03-14)
+### [1.0.9](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.8...v1.0.9) (2022-03-19)
 
-### [1.0.7](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.6...v1.0.7) (2022-03-07)
+
+### Features
+
+* **example support OAuth:** example add method about OAuth ([6c1ba0f](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/6c1ba0f09abff76ad94e9b13726ff117adc52a82))
+* **support network change:** support network change in SDK ([3fbe249](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/3fbe249829abc3673f258a4978db5878ece6d35c))
+* **support OAuth:** add new API for OAuth ([bcdd0a9](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/bcdd0a9add7d87f98d8bb5f764be08234ad3a29a))
+* **support set available network list:** support set available network list to limit network ([6e2ea6e](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/6e2ea6e84527b7c5414e3c29dec641ee2cff274e))
+
+## [1.0.8](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.7...v1.0.8) (2022-03-14)
+
+## [1.0.7](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.6...v1.0.7) (2022-03-07)
 
 
 ### Features
@@ -16,7 +26,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 * **height overrun:**  fixed height overrun and error import problems ([4aacc8e](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/4aacc8ee7be7f02d29345ee7a97ac48ff83dbdd8))
 
-### [1.0.6](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.5...v1.0.6) (2022-03-02)
+## [1.0.6](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.5...v1.0.6) (2022-03-02)
 
 
 ### Features
@@ -28,7 +38,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 * **rolling penetration:** fixed rolling penetration when open the iframe second time ([2f91490](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/2f91490306420238ae006d7f1393b850f06ccc8a))
 
-### [1.0.5](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.4...v1.0.5) (2022-02-23)
+## [1.0.5](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.4...v1.0.5) (2022-02-23)
 
 
 ### Bug Fixes
@@ -37,14 +47,14 @@ All notable changes to this project will be documented in this file. See [standa
 * **safari page auto reload:** fixed Safari auto refresh and other issues ([b83ca43](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/b83ca4351684edaac8d13ca79afab6455b4a1ca5))
 * **user cancel error:** fix the error of cancel auth, and optimize DApp interactive experience ([fafbd47](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/fafbd47e8c8ea8e4463f7149abfe627fb8127c21))
 
-### [1.0.4](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.3...v1.0.4) (2022-02-22)
+## [1.0.4](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.3...v1.0.4) (2022-02-22)
 
 
 ### Bug Fixes
 
 * **optimize iframe and example DApp:** optimize the iframe experience and fix some bug in example ([d83bccc](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/d83bcccdf556f492ee397a6eb7fa2c1d1c0c5b57))
 
-### [1.0.3](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.2...v1.0.3) (2022-02-21)
+## [1.0.3](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.2...v1.0.3) (2022-02-21)
 
 ### Features
 
@@ -56,7 +66,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 * **iframe:** fix the iframe too height ([5b88f26](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/5b88f26b228c5d6f9d87f8a8847ca74481e3afd4))
 
-### [1.0.1](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.0...v1.0.1) (2022-02-18)
+## [1.0.1](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.0...v1.0.1) (2022-02-18)
 
 
 ### Bug Fixes
