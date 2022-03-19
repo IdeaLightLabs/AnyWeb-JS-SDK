@@ -491,12 +491,17 @@ async function walletInitialized() {
 
   const deployContract = getElement('deploy_contract')
 
-  function authed(address) {
+  async function authed(address) {
     if (!address || address === '') {
       return unAuthed()
     }
+    const oauthCode = await provider.request({
+      method: 'anyweb_oauth',
+    })
     getElement('address').innerHTML = address
+    getElement('oauth_code').innerHTML = oauthCode
     console.log('authed address: ', address)
+    console.log('OAuth Code: ', oauthCode)
     sendNativeTokenButton.disabled = false
     approveButton.disabled = false
     transferFromButton.disabled = false
