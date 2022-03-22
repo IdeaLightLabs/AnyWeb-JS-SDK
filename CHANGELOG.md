@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.11](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.10...v1.0.11) (2022-03-22)
+
+
+### Features
+
+* **support logout and change OAuth API:** add logout API and change the way of getting OAuth Code ([38831b4](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/38831b4dbed1196297589a9adeb9271ef610bf80))
+* **support more scopes:** support more scopes ([6a020f3](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/6a020f31f9bb95bf57a918bc857be786b4d1bc38))
+
 ### [1.0.10](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.9...v1.0.10) (2022-03-22)
 
 
