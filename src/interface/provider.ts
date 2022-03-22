@@ -56,6 +56,7 @@ export interface IAuthResult {
   address: string[]
   url: string
   oauthToken: string
+  scopes: string[]
 }
 
 export interface IProviderRpcError extends Error {
@@ -77,7 +78,7 @@ export interface IIframeOptions {
   appId: string
   params: string
   chainId: string
-  scope?: number[]
+  scopes?: string[]
   authType?:
     | 'account'
     | 'createContract'

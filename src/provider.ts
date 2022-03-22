@@ -12,7 +12,13 @@ import {
   IProviderRpcError,
   IRequestArguments,
 } from './interface/provider'
-import { callIframe, readCache, setCache } from './utils/common'
+import {
+  callIframe,
+  isIncluded,
+  readCache,
+  removeCache,
+  setCache,
+} from './utils/common'
 import config from '../package.json'
 import { AddressType, getAddressType } from './utils/address'
 import { ConsoleLike } from './utils/types'
@@ -33,6 +39,9 @@ export class Provider implements IProvider {
   networkId = -1
   chainId = -1
   url = ''
+  scopes: string[] = []
+  reAuth = false
+
   events: {
     onConnect?: (connectInfo: IProviderConnectInfo) => void
     onDisconnect?: (error: IProviderRpcError) => void
@@ -150,10 +159,25 @@ export class Provider implements IProvider {
       case 'cfx_requestAccounts':
         return this.rawRequest('cfx_accounts')
       case 'cfx_accounts':
+        const scopes: string[] =
+          (params && 'scopes' in paramsObj ? paramsObj['scopes'] : []) || []
+        console.log('paramsObj', paramsObj)
+        console.log('scopes', scopes, this.scopes)
         if (this.address.length > 0) {
-          return this.address
+          if (isIncluded(this.scopes, scopes)) {
+            if (scopes.length === 0) {
+              return this.address
+            } else {
+              return {
+                address: this.address,
+                code: this.oauthToken,
+                scopes: scopes,
+              }
+            }
+          } else {
+            removeCache(this)
+          }
         }
-        console.log('cfx_accounts参数', paramsObj)
         const result = (await callIframe(
           'pages/dapp/auth',
           {
@@ -161,9 +185,13 @@ export class Provider implements IProvider {
             params: params ? JSON.stringify(paramsObj) : '',
             chainId: (await this.request({ method: 'cfx_chainId' })) as string,
             authType: 'account',
+            scopes: scopes,
           },
-          this
+          this,
+          this.reAuth
         )) as IAuthResult
+        result.scopes = scopes
+        this.reAuth = false
         setCache(result, this)
         this.events.onAccountsChanged &&
           this.events.onAccountsChanged(result.address)
@@ -171,6 +199,13 @@ export class Provider implements IProvider {
           this.events.onChainChanged(String(result.chainId))
         this.events.onNetworkChanged &&
           this.events.onNetworkChanged(String(result.networkId))
+        if (scopes.length > 0) {
+          return {
+            address: this.address,
+            code: result.oauthToken,
+            scopes: scopes,
+          }
+        }
         return this.address
       case 'cfx_sendTransaction':
         try {
@@ -218,11 +253,6 @@ export class Provider implements IProvider {
         }
       case 'anyweb_version':
         return config.version
-      case 'anyweb_oauth':
-        if (this.oauthToken) {
-          return this.oauthToken
-        }
-        throw new Error('Get oauth token failed: get account address first')
       case 'anyweb_home':
         return await callIframe(
           'pages/index/home',
@@ -234,6 +264,21 @@ export class Provider implements IProvider {
           },
           this
         )
+      case 'anyweb_logout':
+        try {
+          removeCache(this)
+          this.reAuth = true
+          // sendMessageToApp({
+          //   type: 'event',
+          //   data: {
+          //     type: 'logout',
+          //     appId: this.appId,
+          //   },
+          // })
+        } catch (e) {
+          return e
+        }
+        return 'success'
       default:
         return 'Unsupported method'
     }

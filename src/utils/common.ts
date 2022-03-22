@@ -232,11 +232,12 @@ export const callIframe = async (
     appId,
     params,
     chainId,
-    scope = [2],
+    scopes = [],
     authType,
     waitResult = true,
   }: IIframeOptions,
-  provider: Provider
+  provider: Provider,
+  reAuth = false
 ) => {
   if (waitResult) {
     return new Promise<unknown>(async (resolve, reject) => {
@@ -244,7 +245,9 @@ export const callIframe = async (
       const close = await getIframe(
         `${path}?appId=${appId}&authType=${authType}&random=${Math.floor(
           Math.random() * 1000
-        )}&chainId=${chainId}&params=${params}&scope=${JSON.stringify(scope)}`,
+        )}&chainId=${chainId}&params=${params}&scopes=${JSON.stringify(
+          scopes
+        )}&reAuth=${reAuth}`,
         () => {
           if (timer) {
             clearTimeout(timer)
@@ -306,7 +309,7 @@ export const callIframe = async (
     await getIframe(
       `${path}?appId=${appId}&authType=${authType}&random=${Math.floor(
         Math.random() * 1000
-      )}&chainId=${chainId}&params=${params}&scope=${JSON.stringify(scope)}`,
+      )}&chainId=${chainId}&params=${params}&scopes=${JSON.stringify(scopes)}`,
       () => {
         return
       }
@@ -328,6 +331,7 @@ export const readCache = (provider: Provider) => {
       Object.keys(result).includes('chainId') &&
       Object.keys(result).includes('expires') &&
       Object.keys(result).includes('oauthToken') &&
+      Object.keys(result).includes('scopes') &&
       result.expires > new Date().getTime()
     ) {
       provider.address = result.address
@@ -335,6 +339,7 @@ export const readCache = (provider: Provider) => {
       provider.chainId = result.chainId
       provider.url = result.url
       provider.oauthToken = result.oauthToken
+      provider.scopes = result.scopes
     }
   } catch (e) {
     provider.logger.error(e)
@@ -355,5 +360,24 @@ export const setCache = (data: IAuthResult, provider: Provider) => {
   provider.chainId = data.chainId || provider.chainId
   provider.url = data.url
   provider.oauthToken = data.oauthToken || provider.oauthToken
+  provider.scopes = data.scopes || provider.scopes
   return data
+}
+
+export const removeCache = (provider: Provider) => {
+  window.localStorage && window.localStorage.removeItem('anyweb_info')
+  provider.address = []
+  provider.networkId = -1
+  provider.chainId = -1
+  provider.url = ''
+  provider.oauthToken = undefined
+  provider.scopes = []
+}
+
+export const isArrEqual = <T>(arr1: T[], arr2: T[]) => {
+  return arr1.length === arr2.length && arr1.every((ele) => arr2.includes(ele))
+}
+
+export const isIncluded = <T>(arr1: T[], arr2: T[]): boolean => {
+  return arr1.length === new Set([...arr1, ...arr2]).size
 }

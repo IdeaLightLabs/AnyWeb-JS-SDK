@@ -475,6 +475,7 @@ function isAnyWebInstall() {
 async function walletInitialized() {
   // connect
   const connectButton = getElement('connect')
+  const logoutButton = getElement('logout')
   const sendNativeTokenButton = getElement('send_native_token')
   const approveButton = getElement('approve')
   const transferFromButton = getElement('transfer_from')
@@ -491,29 +492,29 @@ async function walletInitialized() {
 
   const deployContract = getElement('deploy_contract')
 
-  async function authed(address) {
+  function authed(address, oauthCode = undefined) {
     if (!address || address === '') {
       return unAuthed()
     }
-    const oauthCode = await provider.request({
-      method: 'anyweb_oauth',
-    })
     getElement('address').innerHTML = address
-    getElement('oauth_code').innerHTML = oauthCode
+    if (oauthCode) {
+      getElement('oauth_code').innerHTML = oauthCode
+    }
     console.log('authed address: ', address)
-    console.log('OAuth Code: ', oauthCode)
     sendNativeTokenButton.disabled = false
     approveButton.disabled = false
     transferFromButton.disabled = false
     deployContract.disabled = false
     getCFXButton.disabled = false
     connectButton.disabled = true
+    logoutButton.disabled = false
     importAddressButton.disabled = false
     importPrivateKeyButton.disabled = false
   }
 
   function unAuthed() {
     getElement('address').innerHTML = 'N/A'
+    getElement('oauth_code').innerHTML = 'N/A'
     console.log('unauthed')
     sendNativeTokenButton.disabled = true
     approveButton.disabled = true
@@ -521,6 +522,7 @@ async function walletInitialized() {
     getCFXButton.disabled = true
     deployContract.disabled = true
     connectButton.disabled = false
+    logoutButton.disabled = true
     importAddressButton.disabled = true
     importPrivateKeyButton.disabled = true
   }
@@ -547,7 +549,7 @@ async function walletInitialized() {
       getElement('version').innerHTML = version
     })
 
-    const [chainId, networkId, alreadyAuthedAddresses] = await Promise.all([
+    const [chainId, networkId, authResult] = await Promise.all([
       provider.request({ method: 'cfx_chainId' }),
       provider.request({ method: 'cfx_netVersion' }),
       provider.request({
@@ -555,10 +557,13 @@ async function walletInitialized() {
         params: [
           {
             availableNetwork: [1, 1029],
+            scopes: ['baseinfo', 'phone'],
           },
         ],
       }),
     ])
+    const { address: alreadyAuthedAddresses, code, scopes } = authResult
+    console.log('DApp 获取到的授权结果', authResult)
 
     getElement('initialized').innerHTML = 'initialized'
     getElement('chainId').innerHTML = chainId
@@ -571,19 +576,32 @@ async function walletInitialized() {
     ) {
       unAuthed()
     } else {
-      authed(alreadyAuthedAddresses[0])
+      authed(alreadyAuthedAddresses[0], code)
     }
   } catch (e) {
     unAuthed()
     console.error('try 到错误了', e)
   }
 
-  connectButton.onclick = () => {
+  connectButton.onclick = async () => {
+    const { address, code } = await provider.request({
+      method: 'cfx_accounts',
+      params: [
+        {
+          availableNetwork: [1, 1029],
+          scopes: ['baseinfo', 'phone'],
+        },
+      ],
+    })
+    authed(address, code)
+  }
+
+  logoutButton.onclick = () => {
     provider
       .request({
-        method: 'cfx_requestAccounts',
+        method: 'anyweb_logout',
       })
-      .then(authed)
+      .then(unAuthed)
       .catch(console.error)
   }
 
