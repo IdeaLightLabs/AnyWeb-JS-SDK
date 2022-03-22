@@ -17,7 +17,7 @@
     "isolatedModules": false,
     "jsx": "preserve",
     "types": [],
-    "outDir": "./lib",
+    "outDir": "./dist",
     "declaration": true
   },
   "include": [

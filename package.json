@@ -12,8 +12,8 @@
     "anyweb",
     "sdk"
   ],
-  "main": "lib/src/index.js",
-  "types": "./lib/src/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "browser": "dist/anyweb-js-sdk.umd.min.js",
   "browserify-browser": {
     "secp256k1": "secp256k1/elliptic"
