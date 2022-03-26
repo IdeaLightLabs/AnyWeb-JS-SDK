@@ -557,7 +557,7 @@ async function walletInitialized() {
         params: [
           {
             availableNetwork: [1, 1029],
-            scopes: ['baseInfo', 'real identity'],
+            scopes: ['baseInfo', 'identity'],
           },
         ],
       }),
@@ -589,7 +589,7 @@ async function walletInitialized() {
       params: [
         {
           availableNetwork: [1, 1029],
-          scopes: ['baseInfo', 'real identity'],
+          scopes: ['baseInfo', 'identity'],
         },
       ],
     })
