@@ -15,9 +15,9 @@ import {
 import {
   callIframe,
   isIncluded,
-  readCache,
-  removeCache,
-  setCache,
+  readStorage,
+  removeStorage,
+  writeStorage,
 } from './utils/common'
 import config from '../package.json'
 import { AddressType, getAddressType } from './utils/address'
@@ -57,8 +57,12 @@ export class Provider implements IProvider {
     }
     this.logger = logger
     this.appId = appId
-    readCache(this)
-
+    const state: {
+      reAuth: boolean
+    } = readStorage('state')
+    if (state.reAuth) {
+      this.reAuth = true
+    }
     // bind functions (to prevent consumers from making unbound calls)
     this.request = this.request.bind(this)
     this.call = this.call.bind(this)
@@ -73,6 +77,24 @@ export class Provider implements IProvider {
       // @ts-ignore
       window.anyweb = this
     }
+  }
+
+  setState(data: IAuthResult) {
+    this.address = data.address
+    this.networkId = data.networkId
+    this.chainId = data.chainId
+    this.url = data.url
+    this.oauthToken = data.oauthToken
+    this.scopes = data.scopes
+  }
+
+  reset() {
+    this.address = []
+    this.networkId = -1
+    this.chainId = -1
+    this.url = ''
+    this.oauthToken = undefined
+    this.scopes = []
   }
 
   /**
@@ -162,7 +184,6 @@ export class Provider implements IProvider {
         const scopes: string[] =
           (params && 'scopes' in paramsObj ? paramsObj['scopes'] : []) || []
         console.log('paramsObj', paramsObj)
-        console.log('scopes', scopes, this.scopes)
         if (this.address.length > 0) {
           if (isIncluded(this.scopes, scopes)) {
             if (scopes.length === 0) {
@@ -170,12 +191,11 @@ export class Provider implements IProvider {
             } else {
               return {
                 address: this.address,
-                code: this.oauthToken,
                 scopes: scopes,
               }
             }
           } else {
-            removeCache(this)
+            this.reset()
           }
         }
         const result = (await callIframe(
@@ -192,7 +212,8 @@ export class Provider implements IProvider {
         )) as IAuthResult
         result.scopes = scopes
         this.reAuth = false
-        setCache(result, this)
+        removeStorage('state')
+        this.setState(result)
         this.events.onAccountsChanged &&
           this.events.onAccountsChanged(result.address)
         this.events.onChainChanged &&
@@ -266,15 +287,11 @@ export class Provider implements IProvider {
         )
       case 'anyweb_logout':
         try {
-          removeCache(this)
+          this.reset()
+          writeStorage('state', {
+            reAuth: true,
+          })
           this.reAuth = true
-          // sendMessageToApp({
-          //   type: 'event',
-          //   data: {
-          //     type: 'logout',
-          //     appId: this.appId,
-          //   },
-          // })
         } catch (e) {
           return e
         }

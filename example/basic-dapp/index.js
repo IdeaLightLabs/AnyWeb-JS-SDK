@@ -556,7 +556,7 @@ async function walletInitialized() {
         method: 'cfx_accounts',
         params: [
           {
-            availableNetwork: [1, 1029],
+            availableNetwork: [1029],
             scopes: ['baseInfo', 'identity'],
           },
         ],
@@ -588,7 +588,7 @@ async function walletInitialized() {
       method: 'cfx_accounts',
       params: [
         {
-          availableNetwork: [1, 1029],
+          availableNetwork: [1],
           scopes: ['baseInfo', 'identity'],
         },
       ],

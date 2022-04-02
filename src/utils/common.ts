@@ -5,7 +5,6 @@
 import * as forge from 'node-forge'
 import { BASE_URL } from '../config'
 import {
-  IAuthResult,
   IIframeData,
   IIframeEventData,
   IIframeOptions,
@@ -318,60 +317,30 @@ export const callIframe = async (
   }
 }
 
-export const readCache = (provider: Provider) => {
-  try {
-    const result = JSON.parse(
-      (window.localStorage && window.localStorage.getItem('anyweb_info')) ||
-        '{}'
-    )
-    if (
-      Object.keys(result).length > 0 &&
-      Object.keys(result).includes('address') &&
-      Object.keys(result).includes('networkId') &&
-      Object.keys(result).includes('chainId') &&
-      Object.keys(result).includes('expires') &&
-      Object.keys(result).includes('oauthToken') &&
-      Object.keys(result).includes('scopes') &&
-      result.expires > new Date().getTime()
-    ) {
-      provider.address = result.address
-      provider.networkId = result.networkId
-      provider.chainId = result.chainId
-      provider.url = result.url
-      provider.oauthToken = result.oauthToken
-      provider.scopes = result.scopes
-    }
-  } catch (e) {
-    provider.logger.error(e)
-  }
-}
-
-export const setCache = (data: IAuthResult, provider: Provider) => {
+export const writeStorage = (
+  key: string,
+  content: Record<string, unknown>,
+  expiresTime: number = 5 * 60 * 1000
+) => {
   window.localStorage &&
     window.localStorage.setItem(
-      'anyweb_info',
+      `anyweb_${key}`,
       JSON.stringify({
-        ...data,
-        expires: 60 * 1000 + new Date().getTime(),
+        ...content,
+        expires: expiresTime + new Date().getTime(),
       })
     )
-  provider.address = data.address || provider.address
-  provider.networkId = data.networkId || provider.networkId
-  provider.chainId = data.chainId || provider.chainId
-  provider.url = data.url
-  provider.oauthToken = data.oauthToken || provider.oauthToken
-  provider.scopes = data.scopes || provider.scopes
-  return data
 }
 
-export const removeCache = (provider: Provider) => {
-  window.localStorage && window.localStorage.removeItem('anyweb_info')
-  provider.address = []
-  provider.networkId = -1
-  provider.chainId = -1
-  provider.url = ''
-  provider.oauthToken = undefined
-  provider.scopes = []
+export const readStorage = (key: string) => {
+  return JSON.parse(
+    (window.localStorage && window.localStorage.getItem(`anyweb_${key}`)) ||
+      '{}'
+  )
+}
+
+export const removeStorage = (key: string) => {
+  window.localStorage && window.localStorage.removeItem(`anyweb_${key}`)
 }
 
 export const isArrEqual = <T>(arr1: T[], arr2: T[]) => {
