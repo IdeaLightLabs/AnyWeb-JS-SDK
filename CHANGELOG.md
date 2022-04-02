@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.12](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.11...v1.0.12) (2022-04-02)
+
+
+### Bug Fixes
+
+* **logout problem:** fix the logout fail problem and remove the cache of SDK ([a662f07](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/a662f0735ac45331c7da0151bbf4537fe2921145))
+* **scope name:** fix the error scope name ([633f860](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/633f86043b7c4c843c26af252f5939367fd4642b))
+
 ### [1.0.11](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.10...v1.0.11) (2022-03-22)
 
 
