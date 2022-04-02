@@ -459,10 +459,9 @@ const confluxFaucetContract = new Conflux().Contract({
 })
 
 // 初始化钱包
-window.conflux = new window.AnyWeb.Provider({
+const provider = new window.AnyWeb.Provider({
   appId: '693b6401-135a-4dc3-846b-1c05ad2572f6',
 }) //
-const provider = window.conflux
 
 function getElement(id) {
   return document.getElementById(id)

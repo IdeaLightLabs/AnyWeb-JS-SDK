@@ -72,9 +72,6 @@ export class Provider implements IProvider {
     if (typeof window !== 'undefined') {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      window.conflux = this
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       window.anyweb = this
     }
   }
