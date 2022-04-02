@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.13](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.12...v1.0.13) (2022-04-02)
+
+
+### Bug Fixes
+
+* **chrome window problem:** fix the chrome window problem ([67d82f6](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/67d82f66371615b9a185ec02eb95200eb433c0a9))
+
 ### [1.0.12](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.11...v1.0.12) (2022-04-02)
 
 
