@@ -480,14 +480,13 @@ async function walletInitialized() {
   const transferFromButton = getElement('transfer_from')
   const getCFXButton = getElement('get-cfx')
   const importAddressButton = getElement('import_address_button')
-  const importPrivateKeyButton = getElement('import_private_key_button')
   const nativeReceiverAddressInput = getElement('native-receiver')
   const countInput = getElement('native-count')
   const approveAccountInput = getElement('approve-account')
   const transferFromAccountInput = getElement('from-account')
   const transferToAccountInput = getElement('to-account')
   const importAddressInput = getElement('import_address_input')
-  const importPrivateKeyInput = getElement('import_private_key_input')
+  const importAddressNameInput = getElement('import_address_name_input')
 
   const deployContract = getElement('deploy_contract')
 
@@ -508,7 +507,6 @@ async function walletInitialized() {
     connectButton.disabled = true
     logoutButton.disabled = false
     importAddressButton.disabled = false
-    importPrivateKeyButton.disabled = false
   }
 
   function unAuthed() {
@@ -523,7 +521,6 @@ async function walletInitialized() {
     connectButton.disabled = false
     logoutButton.disabled = true
     importAddressButton.disabled = true
-    importPrivateKeyButton.disabled = true
   }
 
   provider.on('accountsChanged', (accounts) => {
@@ -726,34 +723,26 @@ async function walletInitialized() {
       getElement('import_address_result').innerHTML = 'valid Params'
       return
     }
+    const addressLength = importAddressInput.value.split(',').length
+    const addressName = importAddressNameInput.value
+      .split(',')
+      .filter((name) => name !== '')
+    const addressNamesLength = addressName.length
+    console.log('addressNamesLength', addressNamesLength)
+    if (addressNamesLength > 0 && addressNamesLength !== addressLength) {
+      getElement('import_address_result').innerHTML =
+        'address length not equal to address name length'
+      return
+    }
     try {
       const tx = {
         address: importAddressInput.value.replace(/\s+/g, '').split(','),
+        addressName: addressName,
       }
       provider
         .request({ method: 'anyweb_importAccount', params: [tx] })
         .then((result) => {
           getElement('import_address_result').innerHTML = result
-          console.log('result', result)
-        })
-    } catch (err) {
-      console.log('err', err)
-    }
-  }
-
-  importPrivateKeyButton.onclick = async () => {
-    if (importPrivateKeyInput.value.replace(/\s+/g, '') === '') {
-      getElement('import_private_key_result').innerHTML = 'valid Params'
-      return
-    }
-    try {
-      const tx = {
-        privateKey: importPrivateKeyInput.value.replace(/\s+/g, '').split(','),
-      }
-      provider
-        .request({ method: 'anyweb_importAccount', params: [tx] })
-        .then((result) => {
-          getElement('import_private_key_result').innerHTML = result
           console.log('result', result)
         })
     } catch (err) {
