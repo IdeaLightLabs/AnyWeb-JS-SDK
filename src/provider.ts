@@ -6,19 +6,17 @@
 import {
   IAuthResult,
   IBaseProviderOptions,
+  IIframeOptions,
+  IPayload,
   IProvider,
   IProviderConnectInfo,
   IProviderMessage,
   IProviderRpcError,
   IRequestArguments,
+  IRequestParams,
+  IRequestParamsAccounts,
 } from './interface/provider'
-import {
-  callIframe,
-  isIncluded,
-  readStorage,
-  removeStorage,
-  writeStorage,
-} from './utils/common'
+import { callIframe } from './utils/common'
 import config from '../package.json'
 import { AddressType, getAddressType } from './utils/address'
 import { ConsoleLike } from './utils/types'
@@ -34,13 +32,6 @@ import { ConsoleLike } from './utils/types'
 export class Provider implements IProvider {
   logger: ConsoleLike
   public readonly appId: string
-  address: string[] = []
-  oauthToken?: string = undefined
-  networkId = -1
-  chainId = -1
-  url = ''
-  scopes: string[] = []
-  reAuth = false
 
   events: {
     onConnect?: (connectInfo: IProviderConnectInfo) => void
@@ -57,12 +48,6 @@ export class Provider implements IProvider {
     }
     this.logger = logger
     this.appId = appId
-    const state: {
-      reAuth: boolean
-    } = readStorage('state')
-    if (state.reAuth) {
-      this.reAuth = true
-    }
     // bind functions (to prevent consumers from making unbound calls)
     this.request = this.request.bind(this)
     this.call = this.call.bind(this)
@@ -74,24 +59,6 @@ export class Provider implements IProvider {
       // @ts-ignore
       window.anyweb = this
     }
-  }
-
-  setState(data: IAuthResult) {
-    this.address = data.address
-    this.networkId = data.networkId
-    this.chainId = data.chainId
-    this.url = data.url
-    this.oauthToken = data.oauthToken
-    this.scopes = data.scopes
-  }
-
-  reset() {
-    this.address = []
-    this.networkId = -1
-    this.chainId = -1
-    this.url = ''
-    this.oauthToken = undefined
-    this.scopes = []
   }
 
   /**
@@ -130,12 +97,12 @@ export class Provider implements IProvider {
     if (!args || typeof args !== 'object' || Array.isArray(args)) {
       throw new Error('Invalid request arguments')
     }
-    const { method, params } = args
+    const { method, params, chainId } = args
     if (!method || method.trim().length === 0) {
       throw new Error('Method is required')
     }
     console.debug(`[AnyWeb] request ${method} with`, params)
-    const result = await this.rawRequest(method, params)
+    const result = await this.rawRequest(method, params, chainId)
     console.debug(`[AnyWeb] request(${method}):`, result)
     return result
   }
@@ -153,64 +120,32 @@ export class Provider implements IProvider {
    * Submits an RPC request
    * @param method
    * @param params
+   * @param chainId
    * @protected
    */
   protected async rawRequest(
     method: string,
-    params?: readonly unknown[] | Record<string, unknown>
+    params?: IRequestParams,
+    chainId = 1
   ): Promise<unknown> {
-    const paramsObj = params
-      ? Array.isArray(params) && params.length > 0
-        ? params[0]
-        : params
-      : {}
     switch (method) {
-      case 'cfx_netVersion':
-        if (this.networkId === -1) {
-          return 1
-        }
-        return this.networkId
-      case 'cfx_chainId':
-        if (this.chainId === -1) {
-          return 1
-        }
-        return this.chainId
       case 'cfx_requestAccounts':
         return this.rawRequest('cfx_accounts')
       case 'cfx_accounts':
-        const scopes: string[] =
-          (params && 'scopes' in paramsObj ? paramsObj['scopes'] : []) || []
-        console.log('paramsObj', paramsObj)
-        if (this.address.length > 0) {
-          if (isIncluded(this.scopes, scopes)) {
-            if (scopes.length === 0) {
-              return this.address
-            } else {
-              return {
-                address: this.address,
-                scopes: scopes,
-              }
-            }
-          } else {
-            this.reset()
-          }
-        }
+        params = params as IRequestParamsAccounts
+        const scopes: string[] = params ? params.scopes || [] : []
         const result = (await callIframe(
           'pages/dapp/auth',
           {
             appId: this.appId,
-            params: params ? JSON.stringify(paramsObj) : '',
-            chainId: (await this.request({ method: 'cfx_chainId' })) as string,
+            params: params ? JSON.stringify(params) : '',
+            chainId: chainId,
             authType: 'account',
             scopes: scopes,
           },
-          this,
-          this.reAuth
+          this
         )) as IAuthResult
         result.scopes = scopes
-        this.reAuth = false
-        removeStorage('state')
-        this.setState(result)
         this.events.onAccountsChanged &&
           this.events.onAccountsChanged(result.address)
         this.events.onChainChanged &&
@@ -219,31 +154,37 @@ export class Provider implements IProvider {
           this.events.onNetworkChanged(String(result.networkId))
         if (scopes.length > 0) {
           return {
-            address: this.address,
-            code: result.oauthToken,
+            address: result.address,
+            code: result.code,
             scopes: scopes,
+            chainId: result.chainId,
+            networkId: result.networkId,
           }
+        } else {
+          return false
         }
-        return this.address
       case 'cfx_sendTransaction':
         try {
+          let authType: IIframeOptions['authType']
+          const { payload } = params as { payload: IPayload }
+          const to = payload.to
+          if (to) {
+            authType =
+              getAddressType(to) === AddressType.CONTRACT
+                ? 'callContract'
+                : 'createTransaction'
+          } else {
+            authType = 'createContract'
+          }
+
+          // createContract
           return await callIframe(
             'pages/dapp/auth',
             {
               appId: this.appId,
-              chainId: (await this.request({
-                method: 'cfx_chainId',
-              })) as string,
-              params: params ? JSON.stringify(paramsObj) : '',
-              authType:
-                params &&
-                Object.keys(paramsObj).includes('to') &&
-                paramsObj['to']
-                  ? getAddressType(paramsObj['to'] as string) ===
-                    AddressType.CONTRACT
-                    ? 'callContract'
-                    : 'createTransaction'
-                  : 'createContract',
+              chainId: chainId,
+              params: params ? JSON.stringify(params) : '',
+              authType: authType,
             },
             this
           )
@@ -257,10 +198,8 @@ export class Provider implements IProvider {
             'pages/dapp/auth',
             {
               appId: this.appId,
-              chainId: (await this.request({
-                method: 'cfx_chainId',
-              })) as string,
-              params: params ? JSON.stringify(paramsObj) : JSON.stringify([]),
+              chainId: chainId,
+              params: params ? JSON.stringify(params) : JSON.stringify({}),
               authType: 'importAccount',
             },
             this
@@ -276,23 +215,23 @@ export class Provider implements IProvider {
           'pages/index/home',
           {
             appId: this.appId,
-            chainId: (await this.request({ method: 'cfx_chainId' })) as string,
-            params: params ? JSON.stringify(paramsObj) : '',
+            chainId: chainId,
+            params: params ? JSON.stringify(params) : '',
             waitResult: false,
           },
           this
         )
-      case 'anyweb_logout':
-        try {
-          this.reset()
-          writeStorage('state', {
-            reAuth: true,
-          })
-          this.reAuth = true
-        } catch (e) {
-          return e
-        }
-        return 'success'
+      case 'exit_accounts':
+        return await callIframe(
+          'pages/dapp/auth',
+          {
+            appId: this.appId,
+            chainId: chainId,
+            params: params ? JSON.stringify(params) : '',
+            authType: 'exit_accounts',
+          },
+          this
+        )
       default:
         return 'Unsupported method'
     }

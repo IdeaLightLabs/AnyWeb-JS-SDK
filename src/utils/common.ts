@@ -235,8 +235,7 @@ export const callIframe = async (
     authType,
     waitResult = true,
   }: IIframeOptions,
-  provider: Provider,
-  reAuth = false
+  provider: Provider
 ) => {
   if (waitResult) {
     return new Promise<unknown>(async (resolve, reject) => {
@@ -246,7 +245,7 @@ export const callIframe = async (
           Math.random() * 1000
         )}&chainId=${chainId}&params=${params}&scopes=${JSON.stringify(
           scopes
-        )}&reAuth=${reAuth}`,
+        )}`,
         () => {
           if (timer) {
             clearTimeout(timer)
@@ -330,17 +329,6 @@ export const writeStorage = (
         expires: expiresTime + new Date().getTime(),
       })
     )
-}
-
-export const readStorage = (key: string) => {
-  return JSON.parse(
-    (window.localStorage && window.localStorage.getItem(`anyweb_${key}`)) ||
-      '{}'
-  )
-}
-
-export const removeStorage = (key: string) => {
-  window.localStorage && window.localStorage.removeItem(`anyweb_${key}`)
 }
 
 export const isArrEqual = <T>(arr1: T[], arr2: T[]) => {

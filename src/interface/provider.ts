@@ -9,7 +9,8 @@ import { ConsoleLike } from '../utils/types'
  */
 export interface IRequestArguments {
   readonly method: string
-  readonly params?: readonly unknown[] | Record<string, unknown>
+  readonly params?: IRequestParams
+  readonly chainId?: number
 }
 
 export interface IBaseProviderOptions {
@@ -55,7 +56,7 @@ export interface IAuthResult {
   networkId: number
   address: string[]
   url: string
-  oauthToken: string
+  code: string
   scopes: string[]
 }
 
@@ -77,7 +78,7 @@ export interface IProviderMessage {
 export interface IIframeOptions {
   appId: string
   params: string
-  chainId: string
+  chainId: number
   scopes?: string[]
   authType?:
     | 'account'
@@ -85,6 +86,7 @@ export interface IIframeOptions {
     | 'callContract'
     | 'createTransaction'
     | 'importAccount'
+    | 'exit_accounts'
   waitResult?: boolean
 }
 
@@ -97,4 +99,25 @@ export interface IIframeData {
 export interface IIframeEventData {
   type: 'changeNetwork' | 'changeChain'
   data: unknown
+}
+
+export type IRequestParams =
+  | IRequestParamsAccounts
+  | { payload: IPayload; gatewayPayload?: IGatewayPayload }
+  | IPayload
+
+export interface IRequestParamsAccounts {
+  scopes: string[]
+
+  [key: string]: unknown
+}
+
+export interface IPayload {
+  to: string
+
+  [key: string]: unknown
+}
+
+export interface IGatewayPayload {
+  [key: string]: unknown
 }
