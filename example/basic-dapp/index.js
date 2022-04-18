@@ -633,10 +633,12 @@ async function walletInitialized() {
 
     const data = await provider.request({
       method: 'cfx_accounts',
-      params: {
-        availableNetwork: [1, 1029],
-        scopes: ['baseInfo', 'identity'],
-      },
+      params: [
+        {
+          availableNetwork: [1, 1029],
+          scopes: ['baseInfo', 'identity'],
+        },
+      ],
     })
     const { chainId, networkId, address: alreadyAuthedAddresses, code } = data
     console.log(
@@ -668,10 +670,12 @@ async function walletInitialized() {
   connectButton.onclick = async () => {
     const data = await provider.request({
       method: 'cfx_accounts',
-      params: {
-        availableNetwork: [1, 1029],
-        scopes: ['baseInfo', 'identity'],
-      },
+      params: [
+        {
+          availableNetwork: [1, 1029],
+          scopes: ['baseInfo', 'identity'],
+        },
+      ],
     })
     const { chainId, networkId, address: alreadyAuthedAddresses, code } = data
     console.log(
@@ -722,10 +726,7 @@ async function walletInitialized() {
     provider
       .request({
         method: 'cfx_sendTransaction',
-        params: {
-          payload,
-          gatewayPayload,
-        },
+        params: [payload, gatewayPayload],
       })
       .then((result) => {
         getElement('send_native_token_result').innerHTML = `txhash: ${result}`
@@ -742,7 +743,7 @@ async function walletInitialized() {
       }
       console.log('getCFX tx', tx)
       provider
-        .request({ method: 'cfx_sendTransaction', params: { payload: tx } })
+        .request({ method: 'cfx_sendTransaction', params: [tx] })
         .then((result) => {
           getElement('get_cfx_result').innerHTML = result
           console.log('result', result)
@@ -775,7 +776,7 @@ async function walletInitialized() {
       provider
         .request({
           method: 'cfx_sendTransaction',
-          params: { payload, gatewayPayload },
+          params: [payload, gatewayPayload],
         })
         .then((result) => {
           getElement('gateway_test_result').innerHTML = result
@@ -803,7 +804,7 @@ async function walletInitialized() {
         gasPrice: 2,
       }
       provider
-        .request({ method: 'cfx_sendTransaction', params: { payload: tx } })
+        .request({ method: 'cfx_sendTransaction', params: [tx] })
         .then((result) => {
           getElement('approve_result').innerHTML = result
           console.log('result', result)
@@ -826,7 +827,7 @@ async function walletInitialized() {
         ).data,
       }
       provider
-        .request({ method: 'cfx_sendTransaction', params: { payload: tx } })
+        .request({ method: 'cfx_sendTransaction', params: [tx] })
         .then((result) => {
           console.log('result', result)
         })
@@ -844,7 +845,7 @@ async function walletInitialized() {
         data: exampleContract.constructor('Example', 18, 'EP', 10000).data,
       }
       provider
-        .request({ method: 'cfx_sendTransaction', params: { payload: tx } })
+        .request({ method: 'cfx_sendTransaction', params: [tx] })
         .then((result) => {
           getElement('deploy_contract_result').innerHTML =
             result.transactionHash
@@ -877,7 +878,7 @@ async function walletInitialized() {
         addressName: addressName,
       }
       provider
-        .request({ method: 'anyweb_importAccount', params: tx })
+        .request({ method: 'anyweb_importAccount', params: [tx] })
         .then((result) => {
           getElement('import_address_result').innerHTML = result
           console.log('result', result)

@@ -7,14 +7,11 @@ import {
   IAuthResult,
   IBaseProviderOptions,
   IIframeOptions,
-  IPayload,
   IProvider,
   IProviderConnectInfo,
   IProviderMessage,
   IProviderRpcError,
   IRequestArguments,
-  IRequestParams,
-  IRequestParamsAccounts,
 } from './interface/provider'
 import { callIframe } from './utils/common'
 import config from '../package.json'
@@ -32,6 +29,7 @@ import { ConsoleLike } from './utils/types'
 export class Provider implements IProvider {
   logger: ConsoleLike
   public readonly appId: string
+  private chainId = 1
 
   events: {
     onConnect?: (connectInfo: IProviderConnectInfo) => void
@@ -97,12 +95,12 @@ export class Provider implements IProvider {
     if (!args || typeof args !== 'object' || Array.isArray(args)) {
       throw new Error('Invalid request arguments')
     }
-    const { method, params, chainId } = args
+    const { method, params } = args
     if (!method || method.trim().length === 0) {
       throw new Error('Method is required')
     }
     console.debug(`[AnyWeb] request ${method} with`, params)
-    const result = await this.rawRequest(method, params, chainId)
+    const result = await this.rawRequest(method, params)
     console.debug(`[AnyWeb] request(${method}):`, result)
     return result
   }
@@ -120,26 +118,21 @@ export class Provider implements IProvider {
    * Submits an RPC request
    * @param method
    * @param params
-   * @param chainId
    * @protected
    */
-  protected async rawRequest(
-    method: string,
-    params?: IRequestParams,
-    chainId = 1
-  ): Promise<unknown> {
+  protected async rawRequest(method: string, params?: any): Promise<unknown> {
     switch (method) {
       case 'cfx_requestAccounts':
         return this.rawRequest('cfx_accounts')
       case 'cfx_accounts':
-        params = params as IRequestParamsAccounts
-        const scopes: string[] = params ? params.scopes || [] : []
+        console.log({ params })
+        const scopes = params[0].scopes
         const result = (await callIframe(
           'pages/dapp/auth',
           {
             appId: this.appId,
-            params: params ? JSON.stringify(params) : '',
-            chainId: chainId,
+            params: params ? JSON.stringify(params[0]) : '',
+            chainId: this.chainId,
             authType: 'account',
             scopes: scopes,
           },
@@ -166,7 +159,7 @@ export class Provider implements IProvider {
       case 'cfx_sendTransaction':
         try {
           let authType: IIframeOptions['authType']
-          const { payload } = params as { payload: IPayload }
+          const payload = params[0]
           const to = payload.to
           if (to) {
             authType =
@@ -182,8 +175,13 @@ export class Provider implements IProvider {
             'pages/dapp/auth',
             {
               appId: this.appId,
-              chainId: chainId,
-              params: params ? JSON.stringify(params) : '',
+              chainId: this.chainId,
+              params: params
+                ? JSON.stringify({
+                    payload: params[0],
+                    gatewayPayload: params[1],
+                  })
+                : '',
               authType: authType,
             },
             this
@@ -198,8 +196,8 @@ export class Provider implements IProvider {
             'pages/dapp/auth',
             {
               appId: this.appId,
-              chainId: chainId,
-              params: params ? JSON.stringify(params) : JSON.stringify({}),
+              chainId: this.chainId,
+              params: params ? JSON.stringify(params[0]) : JSON.stringify({}),
               authType: 'importAccount',
             },
             this
@@ -215,7 +213,7 @@ export class Provider implements IProvider {
           'pages/index/home',
           {
             appId: this.appId,
-            chainId: chainId,
+            chainId: this.chainId,
             params: params ? JSON.stringify(params) : '',
             waitResult: false,
           },
@@ -226,7 +224,7 @@ export class Provider implements IProvider {
           'pages/dapp/auth',
           {
             appId: this.appId,
-            chainId: chainId,
+            chainId: this.chainId,
             params: params ? JSON.stringify(params) : '',
             authType: 'exit_accounts',
           },
