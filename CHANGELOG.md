@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.3](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.2...v1.1.3) (2022-04-19)
+
+
+### Bug Fixes
+
+* **eslint:** fix the eslint problem ([cb3b994](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/cb3b99471793bb13214c4b483f5f89f21edcfbf5))
+
 ### [1.1.2](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.0.13...v1.1.2) (2022-04-19)
 
 
