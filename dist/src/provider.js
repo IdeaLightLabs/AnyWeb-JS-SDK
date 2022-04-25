@@ -208,6 +208,12 @@ class Provider {
                         params: params ? JSON.stringify(params) : '',
                         authType: 'exit_accounts',
                     }, this);
+                case 'anyweb_identify':
+                    return yield (0, common_1.callIframe)('pages/user/identify', {
+                        appId: this.appId,
+                        chainId: this.chainId,
+                        params: params ? JSON.stringify(params) : '',
+                    }, this);
                 default:
                     return 'Unsupported method';
             }

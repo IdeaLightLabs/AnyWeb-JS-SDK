@@ -230,6 +230,17 @@ export class Provider implements IProvider {
           },
           this
         )
+      case 'anyweb_identify':
+        return await callIframe(
+          'pages/user/identify',
+          {
+            appId: this.appId,
+            chainId: this.chainId,
+            params: params ? JSON.stringify(params) : '',
+          },
+          this
+        )
+
       default:
         return 'Unsupported method'
     }

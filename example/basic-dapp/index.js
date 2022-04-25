@@ -575,6 +575,7 @@ async function walletInitialized() {
   const transferToAccountInput = getElement('to-account')
   const importAddressInput = getElement('import_address_input')
   const importAddressNameInput = getElement('import_address_name_input')
+  const identifyButton = getElement('identify_button')
 
   const deployContract = getElement('deploy_contract')
 
@@ -596,6 +597,7 @@ async function walletInitialized() {
     connectButton.disabled = true
     DeauthorizeButton.disabled = false
     importAddressButton.disabled = false
+    identifyButton.disabled = false
   }
 
   function unAuthed() {
@@ -611,6 +613,7 @@ async function walletInitialized() {
     connectButton.disabled = false
     DeauthorizeButton.disabled = true
     importAddressButton.disabled = true
+    identifyButton.disabled = true
   }
 
   provider.on('accountsChanged', (accounts) => {
@@ -881,6 +884,19 @@ async function walletInitialized() {
         .request({ method: 'anyweb_importAccount', params: [tx] })
         .then((result) => {
           getElement('import_address_result').innerHTML = result
+          console.log('result', result)
+        })
+    } catch (err) {
+      console.log('err', err)
+    }
+  }
+
+  identifyButton.onclick = async () => {
+    try {
+      provider
+        .request({ method: 'anyweb_identify', params: [] })
+        .then((result) => {
+          getElement('identify_result').innerHTML = result
           console.log('result', result)
         })
     } catch (err) {
