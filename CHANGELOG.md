@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.4](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.3...v1.1.4) (2022-04-25)
+
+
+### Features
+
+* **add identify function:** add the function of jumping to verify the identity page ([c601365](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/c601365e486cfaef9767dca0b92dcda3b5103842))
+
 ### [1.1.3](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.2...v1.1.3) (2022-04-19)
 
 
