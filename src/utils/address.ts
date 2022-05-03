@@ -13,7 +13,7 @@ export enum AddressType {
  */
 export const getAddressType = (address: string): AddressType => {
   const decodeResult = decode(address)
-  console.log('decodeResult', decodeResult)
+  console.debug('[AnyWeb] decodeResult', decodeResult)
   if (Object.keys(decodeResult).includes('type')) {
     return decodeResult.type as AddressType
   } else {

@@ -13,7 +13,7 @@ import {
   IProviderRpcError,
   IRequestArguments,
 } from './interface/provider'
-import { callIframe } from './utils/common'
+import { callIframe, createIframe } from './utils/common'
 import config from '../package.json'
 import { AddressType, getAddressType } from './utils/address'
 import { ConsoleLike } from './utils/types'
@@ -57,6 +57,10 @@ export class Provider implements IProvider {
       // @ts-ignore
       window.anyweb = this
     }
+
+    createIframe('pages/index/home')
+      .then()
+      .catch((e) => console.error('[AnyWeb] createIframe error', e))
   }
 
   /**
@@ -125,7 +129,7 @@ export class Provider implements IProvider {
       case 'cfx_requestAccounts':
         return this.rawRequest('cfx_accounts')
       case 'cfx_accounts':
-        console.log({ params })
+        console.debug('[AnyWeb]', { params })
         const scopes = params[0].scopes
         const result = (await callIframe(
           'pages/dapp/auth',
@@ -187,7 +191,7 @@ export class Provider implements IProvider {
             this
           )
         } catch (e) {
-          console.error('Error to sendTransaction', e)
+          console.error('[AnyWeb] Error to sendTransaction', e)
           return e
         }
       case 'anyweb_importAccount':
@@ -203,7 +207,7 @@ export class Provider implements IProvider {
             this
           )
         } catch (e) {
-          console.error('Error to import Address', e)
+          console.error('[AnyWeb] Error to import Address', e)
           return e
         }
       case 'anyweb_version':
@@ -254,7 +258,7 @@ export class Provider implements IProvider {
    * provider.on('connected', listener)
    */
   on(type: string, listener: (...args: any[]) => void): void {
-    console.log('(AnyWeb) on', {
+    console.debug('[AnyWeb] on', {
       type,
       listener,
     })

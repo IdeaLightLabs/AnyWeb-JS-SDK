@@ -633,38 +633,37 @@ async function walletInitialized() {
     provider.request({ method: 'anyweb_version' }).then((version) => {
       getElement('version').innerHTML = version
     })
-
-    const data = await provider.request({
-      method: 'cfx_accounts',
-      params: [
-        {
-          availableNetwork: [1, 1029],
-          scopes: ['baseInfo', 'identity'],
-        },
-      ],
-    })
-    const { chainId, networkId, address: alreadyAuthedAddresses, code } = data
-    console.log(
-      'DApp 获取到的授权结果',
-      chainId,
-      networkId,
-      alreadyAuthedAddresses,
-      code
-    )
-    setState(data)
-    getElement('initialized').innerHTML = 'initialized'
-    getElement('chainId').innerHTML = chainId
-    getElement('networkId').innerHTML = networkId
-
-    if (
-      !alreadyAuthedAddresses ||
-      !alreadyAuthedAddresses.length ||
-      alreadyAuthedAddresses.length === 0
-    ) {
-      unAuthed()
-    } else {
-      authed(alreadyAuthedAddresses[0], code)
-    }
+    // const data = await provider.request({
+    //   method: 'cfx_accounts',
+    //   params: [
+    //     {
+    //       availableNetwork: [1, 1029],
+    //       scopes: ['baseInfo', 'identity'],
+    //     },
+    //   ],
+    // })
+    // const { chainId, networkId, address: alreadyAuthedAddresses, code } = data
+    // console.log(
+    //   'DApp 获取到的授权结果',
+    //   chainId,
+    //   networkId,
+    //   alreadyAuthedAddresses,
+    //   code
+    // )
+    // setState(data)
+    // getElement('initialized').innerHTML = 'initialized'
+    // getElement('chainId').innerHTML = chainId
+    // getElement('networkId').innerHTML = networkId
+    //
+    // if (
+    //   !alreadyAuthedAddresses ||
+    //   !alreadyAuthedAddresses.length ||
+    //   alreadyAuthedAddresses.length === 0
+    // ) {
+    //   unAuthed()
+    // } else {
+    //   authed(alreadyAuthedAddresses[0], code)
+    // }
   } catch (e) {
     unAuthed()
     console.error('try 到错误了', e)

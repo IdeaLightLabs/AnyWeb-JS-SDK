@@ -104,29 +104,8 @@ export const sendMessageToApp = ({
     )
 }
 
-export const getIframe = async (
-  url: string,
-  onClose: () => void
-): Promise<() => void> => {
-  if (
-    document.getElementById('anyweb-iframe-mask') &&
-    document.getElementById('anyweb-iframe')
-  ) {
-    const mask = document.getElementById('anyweb-iframe-mask') as HTMLDivElement
-    sendMessageToApp({
-      type: 'router',
-      data: {
-        path: `/${url}`,
-        mode: 'redirectTo',
-      },
-    })
-    mask.style.display = 'block'
-    setBodyNonScrollable()
-    return () => {
-      onClose()
-      closeIframe(mask)
-    }
-  }
+export const createIframe = async (url: string) => {
+  console.debug('[AnyWeb] createIframe', url)
   const mask = document.createElement('div')
   const div = document.createElement('div')
   const iframe = document.createElement('iframe')
@@ -211,14 +190,43 @@ export const getIframe = async (
   div.insertBefore(iframe, div.firstElementChild)
   !isFullScreen() && mask.insertBefore(button, mask.firstElementChild)
   mask.insertBefore(div, mask.firstElementChild)
+  // Hide before call the method
+  mask.style.display = 'none'
+  // setBodyScrollable()
+
   button.onclick = () => {
-    setBodyScrollable()
-    onClose()
-    mask.style.display = 'none'
+    closeIframe(mask)
   }
   document.body.appendChild(style)
-  setBodyNonScrollable()
+
   document.body.insertBefore(mask, document.body.firstElementChild)
+}
+
+export const getIframe = async (
+  url: string,
+  onClose: () => void
+): Promise<() => void> => {
+  if (
+    !(
+      document.getElementById('anyweb-iframe-mask') &&
+      document.getElementById('anyweb-iframe')
+    )
+  ) {
+    console.warn('[AnyWeb] Something wrong with the iframe, recreating...')
+    await createIframe(url)
+  }
+  sendMessageToApp({
+    type: 'router',
+    data: {
+      path: `/${url}`,
+      mode: 'redirectTo',
+    },
+  })
+  const mask = document.getElementById('anyweb-iframe-mask') as HTMLDivElement
+  setTimeout(() => {
+    mask.style.display = 'block'
+    setBodyNonScrollable()
+  }, 300)
   return () => {
     onClose()
     closeIframe(mask)
@@ -267,7 +275,7 @@ export const callIframe = async (
             'type' in event.data &&
             event.data.type === 'anyweb'
           ) {
-            console.log('SDK收到子页面信息: ', event.data)
+            console.debug('[AnyWeb] SDK收到子页面信息: ', event.data)
             callback = event.data.data as IIframeData
 
             if (callback.type === 'callback') {
