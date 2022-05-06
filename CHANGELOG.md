@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.7](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.2...v1.1.7) (2022-05-06)
+
+
+### Features
+
+* **add identify function:** add the function of jumping to verify the identity page ([c601365](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/c601365e486cfaef9767dca0b92dcda3b5103842))
+* **insensitive loading iframe:** now we can load the iframe without waiting ([cd6b363](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/cd6b36387c8f121c30b94447f8b78d61961d573f))
+* **support logout:** support logout ([ce8fa87](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/ce8fa87a0d865b72ee5f8e6ea71d701110a438bc))
+
+
+### Bug Fixes
+
+* **eslint:** fix the eslint problem ([cb3b994](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/cb3b99471793bb13214c4b483f5f89f21edcfbf5))
+* **params as any:** params as any ([8d1886c](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/8d1886ce6cbdef6c557eb5963e1cf7660ab1b77d))
+
 ### [1.1.6](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.4...v1.1.6) (2022-04-26)
 
 ### [1.1.4](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.3...v1.1.4) (2022-04-25)
