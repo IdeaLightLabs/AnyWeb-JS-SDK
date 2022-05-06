@@ -244,7 +244,18 @@ export class Provider implements IProvider {
           },
           this
         )
-
+      case 'anyweb_logout':
+        // Logout the account of AnyWeb
+        return await callIframe(
+          'pages/dapp/auth',
+          {
+            appId: this.appId,
+            chainId: this.chainId,
+            params: params ? JSON.stringify(params) : '',
+            authType: 'logout',
+          },
+          this
+        )
       default:
         return 'Unsupported method'
     }

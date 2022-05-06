@@ -87,6 +87,7 @@ export interface IIframeOptions {
     | 'createTransaction'
     | 'importAccount'
     | 'exit_accounts'
+    | 'logout'
   waitResult?: boolean
 }
 

@@ -76,8 +76,11 @@ export const isObject = (obj: unknown) => {
 }
 
 const closeIframe = (root: HTMLDivElement) => {
-  setBodyScrollable()
-  root.style.display = 'none'
+  console.debug('[AnyWeb]', 'closeIframe', root.style)
+  setTimeout(() => {
+    setBodyScrollable()
+    root.style.display = 'none'
+  }, 100)
 }
 export const sendMessageToApp = ({
   data,
@@ -226,7 +229,7 @@ export const getIframe = async (
   setTimeout(() => {
     mask.style.display = 'block'
     setBodyNonScrollable()
-  }, 300)
+  }, 100)
   return () => {
     onClose()
     closeIframe(mask)
@@ -284,11 +287,10 @@ export const callIframe = async (
                 receiveMessageFromIframePage
               )
               clearTimeout(timer)
+              close()
               if (callback.success) {
-                close()
                 resolve(callback.data)
               } else {
-                close()
                 reject(new Error(callback.data as string))
               }
             } else if (callback.type === 'event') {
