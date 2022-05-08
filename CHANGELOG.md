@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.8](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.2...v1.1.8) (2022-05-08)
+
+
+### Features
+
+* **add identify function:** add the function of jumping to verify the identity page ([c601365](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/c601365e486cfaef9767dca0b92dcda3b5103842))
+
+
+### Bug Fixes
+
+* **eslint:** fix the eslint problem ([cb3b994](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/cb3b99471793bb13214c4b483f5f89f21edcfbf5))
+
 ### [1.1.6](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.4...v1.1.6) (2022-04-26)
 
 ### [1.1.4](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.3...v1.1.4) (2022-04-25)
