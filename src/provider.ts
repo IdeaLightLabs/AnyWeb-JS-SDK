@@ -231,6 +231,7 @@ export class Provider implements IProvider {
             chainId: this.chainId,
             params: params ? JSON.stringify(params) : '',
             authType: 'exit_accounts',
+            silence: true,
           },
           this
         )
@@ -253,6 +254,7 @@ export class Provider implements IProvider {
             chainId: this.chainId,
             params: params ? JSON.stringify(params) : '',
             authType: 'logout',
+            silence: true,
           },
           this
         )

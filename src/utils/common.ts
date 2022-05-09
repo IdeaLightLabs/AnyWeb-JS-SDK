@@ -77,10 +77,8 @@ export const isObject = (obj: unknown) => {
 
 const closeIframe = (root: HTMLDivElement) => {
   console.debug('[AnyWeb]', 'closeIframe', root.style)
-  setTimeout(() => {
-    setBodyScrollable()
-    root.style.display = 'none'
-  }, 100)
+  setBodyScrollable()
+  root.style.display = 'none'
 }
 export const sendMessageToApp = ({
   data,
@@ -207,7 +205,8 @@ export const createIframe = async (url: string) => {
 
 export const getIframe = async (
   url: string,
-  onClose: () => void
+  onClose: () => void,
+  silence = false
 ): Promise<() => void> => {
   if (
     !(
@@ -226,13 +225,15 @@ export const getIframe = async (
     },
   })
   const mask = document.getElementById('anyweb-iframe-mask') as HTMLDivElement
-  setTimeout(() => {
+  if (!silence) {
     mask.style.display = 'block'
     setBodyNonScrollable()
-  }, 100)
+  }
   return () => {
     onClose()
-    closeIframe(mask)
+    if (!silence) {
+      closeIframe(mask)
+    }
   }
 }
 
@@ -245,6 +246,7 @@ export const callIframe = async (
     scopes = [],
     authType,
     waitResult = true,
+    silence = false,
   }: IIframeOptions,
   provider: Provider
 ) => {
@@ -261,7 +263,8 @@ export const callIframe = async (
           if (timer) {
             clearTimeout(timer)
           }
-        }
+        },
+        silence
       )
       const timer = setTimeout(() => {
         close()
@@ -320,7 +323,8 @@ export const callIframe = async (
       )}&chainId=${chainId}&params=${params}&scopes=${JSON.stringify(scopes)}`,
       () => {
         return
-      }
+      },
+      silence
     )
     return 'ok'
   }

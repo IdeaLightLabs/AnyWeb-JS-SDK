@@ -89,6 +89,7 @@ export interface IIframeOptions {
     | 'exit_accounts'
     | 'logout'
   waitResult?: boolean
+  silence?: boolean
 }
 
 export interface IIframeData {
