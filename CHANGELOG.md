@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.9](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.7...v1.1.9) (2022-05-09)
+
+
+### Features
+
+* **silent mode:** support silent mode ([9eebebf](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/9eebebffca4185ae2bdafd6193c10b95db9d5419))
+
 ### [1.1.7](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.2...v1.1.7) (2022-05-06)
 
 
