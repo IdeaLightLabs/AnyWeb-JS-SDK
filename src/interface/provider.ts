@@ -88,6 +88,7 @@ export interface IIframeOptions {
     | 'importAccount'
     | 'exit_accounts'
     | 'logout'
+    | 'check_auth'
   waitResult?: boolean
   silence?: boolean
 }

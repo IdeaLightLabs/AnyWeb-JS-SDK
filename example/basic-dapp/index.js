@@ -562,7 +562,6 @@ async function walletInitialized() {
   // connect
   const connectButton = getElement('connect')
   const DeauthorizeButton = getElement('Deauthorize')
-  const logoutButton = getElement('Logout')
   const sendNativeTokenButton = getElement('send_native_token')
   const approveButton = getElement('approve')
   const transferFromButton = getElement('transfer_from')
@@ -576,7 +575,6 @@ async function walletInitialized() {
   const transferToAccountInput = getElement('to-account')
   const importAddressInput = getElement('import_address_input')
   const importAddressNameInput = getElement('import_address_name_input')
-  const identifyButton = getElement('identify_button')
 
   const deployContract = getElement('deploy_contract')
 
@@ -597,9 +595,7 @@ async function walletInitialized() {
     gatewayTestButton.disabled = false
     connectButton.disabled = true
     DeauthorizeButton.disabled = false
-    logoutButton.disabled = false
     importAddressButton.disabled = false
-    identifyButton.disabled = false
   }
 
   function unAuthed() {
@@ -614,9 +610,7 @@ async function walletInitialized() {
     deployContract.disabled = true
     connectButton.disabled = false
     DeauthorizeButton.disabled = true
-    logoutButton.disabled = true
     importAddressButton.disabled = true
-    identifyButton.disabled = true
   }
 
   provider.on('accountsChanged', (accounts) => {
@@ -636,37 +630,38 @@ async function walletInitialized() {
     provider.request({ method: 'anyweb_version' }).then((version) => {
       getElement('version').innerHTML = version
     })
-    // const data = await provider.request({
-    //   method: 'cfx_accounts',
-    //   params: [
-    //     {
-    //       availableNetwork: [1, 1029],
-    //       scopes: ['baseInfo', 'identity'],
-    //     },
-    //   ],
-    // })
-    // const { chainId, networkId, address: alreadyAuthedAddresses, code } = data
-    // console.log(
-    //   'DApp 获取到的授权结果',
-    //   chainId,
-    //   networkId,
-    //   alreadyAuthedAddresses,
-    //   code
-    // )
-    // setState(data)
-    // getElement('initialized').innerHTML = 'initialized'
-    // getElement('chainId').innerHTML = chainId
-    // getElement('networkId').innerHTML = networkId
-    //
-    // if (
-    //   !alreadyAuthedAddresses ||
-    //   !alreadyAuthedAddresses.length ||
-    //   alreadyAuthedAddresses.length === 0
-    // ) {
-    //   unAuthed()
-    // } else {
-    //   authed(alreadyAuthedAddresses[0], code)
-    // }
+
+    const data = await provider.request({
+      method: 'cfx_accounts',
+      params: [
+        {
+          availableNetwork: [1, 1029],
+          scopes: ['baseInfo', 'identity'],
+        },
+      ],
+    })
+    const { chainId, networkId, address: alreadyAuthedAddresses, code } = data
+    console.log(
+      'DApp 获取到的授权结果',
+      chainId,
+      networkId,
+      alreadyAuthedAddresses,
+      code
+    )
+    setState(data)
+    getElement('initialized').innerHTML = 'initialized'
+    getElement('chainId').innerHTML = chainId
+    getElement('networkId').innerHTML = networkId
+
+    if (
+      !alreadyAuthedAddresses ||
+      !alreadyAuthedAddresses.length ||
+      alreadyAuthedAddresses.length === 0
+    ) {
+      unAuthed()
+    } else {
+      authed(alreadyAuthedAddresses[0], code)
+    }
   } catch (e) {
     unAuthed()
     console.error('try 到错误了', e)
@@ -710,14 +705,6 @@ async function walletInitialized() {
     provider
       .request({
         method: 'exit_accounts',
-      })
-      .then(unAuthed)
-      .catch(console.error)
-  }
-  logoutButton.onclick = () => {
-    provider
-      .request({
-        method: 'anyweb_logout',
       })
       .then(unAuthed)
       .catch(console.error)
@@ -894,19 +881,6 @@ async function walletInitialized() {
         .request({ method: 'anyweb_importAccount', params: [tx] })
         .then((result) => {
           getElement('import_address_result').innerHTML = result
-          console.log('result', result)
-        })
-    } catch (err) {
-      console.log('err', err)
-    }
-  }
-
-  identifyButton.onclick = async () => {
-    try {
-      provider
-        .request({ method: 'anyweb_identify', params: [] })
-        .then((result) => {
-          getElement('identify_result').innerHTML = result
           console.log('result', result)
         })
     } catch (err) {

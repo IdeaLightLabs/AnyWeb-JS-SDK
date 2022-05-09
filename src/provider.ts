@@ -131,17 +131,36 @@ export class Provider implements IProvider {
       case 'cfx_accounts':
         console.debug('[AnyWeb]', { params })
         const scopes = params[0].scopes
-        const result = (await callIframe(
-          'pages/dapp/auth',
-          {
-            appId: this.appId,
-            params: params ? JSON.stringify(params[0]) : '',
-            chainId: this.chainId,
-            authType: 'account',
-            scopes: scopes,
-          },
-          this
-        )) as IAuthResult
+        let result: IAuthResult
+        try {
+          result = (await callIframe(
+            'pages/dapp/auth',
+            {
+              appId: this.appId,
+              params: params ? JSON.stringify(params[0]) : '',
+              chainId: this.chainId,
+              authType: 'check_auth',
+              scopes: scopes,
+              silence: true,
+            },
+            this
+          )) as IAuthResult
+          console.debug('[AnyWeb]', 'silent auth result', result)
+        } catch (e) {
+          console.debug('[AnyWeb]', 'need to auth', e)
+          result = (await callIframe(
+            'pages/dapp/auth',
+            {
+              appId: this.appId,
+              params: params ? JSON.stringify(params[0]) : '',
+              chainId: this.chainId,
+              authType: 'account',
+              scopes: scopes,
+            },
+            this
+          )) as IAuthResult
+        }
+
         result.scopes = scopes
         this.events.onAccountsChanged &&
           this.events.onAccountsChanged(result.address)

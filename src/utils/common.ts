@@ -268,7 +268,7 @@ export const callIframe = async (
       )
       const timer = setTimeout(() => {
         close()
-        reject(new Error('Timeout'))
+        reject('Timeout')
       }, 10 * 60 * 1000)
 
       // Set Listeners
@@ -294,7 +294,7 @@ export const callIframe = async (
               if (callback.success) {
                 resolve(callback.data)
               } else {
-                reject(new Error(callback.data as string))
+                reject(callback.data as string)
               }
             } else if (callback.type === 'event') {
               const eventData = callback.data as IIframeEventData
