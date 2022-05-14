@@ -255,15 +255,34 @@ export class Provider implements IProvider {
           this
         )
       case 'anyweb_identify':
-        return await callIframe(
-          'pages/user/identify',
-          {
-            appId: this.appId,
-            chainId: this.chainId,
-            params: params ? JSON.stringify(params) : '',
-          },
-          this
-        )
+        let identifyResult
+        try {
+          identifyResult = await callIframe(
+            'pages/user/identify',
+            {
+              appId: this.appId,
+              chainId: this.chainId,
+              params: params ? JSON.stringify(params) : '',
+              authType: 'check_identify',
+              silence: true,
+            },
+            this
+          )
+          console.debug('[AnyWeb]', 'Check identify result', identifyResult)
+        } catch (e) {
+          console.debug('[AnyWeb]', 'need to identify', e)
+          identifyResult = await callIframe(
+            'pages/user/identify',
+            {
+              appId: this.appId,
+              chainId: this.chainId,
+              params: params ? JSON.stringify(params) : '',
+              authType: 'identify',
+            },
+            this
+          )
+        }
+        return identifyResult
       case 'anyweb_logout':
         // Logout the account of AnyWeb
         return await callIframe(
@@ -277,6 +296,23 @@ export class Provider implements IProvider {
           },
           this
         )
+      case 'anyweb_loginstate':
+        try {
+          return await callIframe(
+            'pages/dapp/auth',
+            {
+              appId: this.appId,
+              params: '',
+              chainId: this.chainId,
+              authType: 'check_login',
+              silence: true,
+            },
+            this
+          )
+        } catch (e) {
+          console.debug('[AnyWeb]', 'need to login', e)
+          return false
+        }
       default:
         return 'Unsupported method'
     }
