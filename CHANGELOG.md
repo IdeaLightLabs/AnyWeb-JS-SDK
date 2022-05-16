@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.11](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.10...v1.1.11) (2022-05-16)
+
+
+### Features
+
+* **support check login state:** support check login state and add silent mode of identify ([a391500](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/a391500b2704a7c565d289e897a73bbb9f6b49b3))
+
 ### [1.1.10](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.9...v1.1.10) (2022-05-09)
 
 
