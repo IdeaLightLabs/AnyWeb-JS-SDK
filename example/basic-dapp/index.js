@@ -423,7 +423,11 @@ const confluxFaucetContract = new Conflux().Contract({
           type: 'address',
         },
         { internalType: 'uint256', name: 'interval', type: 'uint256' },
-        { internalType: 'uint256', name: 'amount', type: 'uint256' },
+        {
+          internalType: 'uint256',
+          name: 'amount',
+          type: 'uint256',
+        },
       ],
       name: 'setClaimSetting',
       outputs: [],
@@ -516,6 +520,10 @@ const abi = [
 const provider = new window.AnyWeb.Provider({
   appId: '693b6401-135a-4dc3-846b-1c05ad2572f6',
 }) //
+console.log('开始监听是否准备好')
+provider.on('ready', async () => {
+  walletInitialized()
+})
 
 function getElement(id) {
   return document.getElementById(id)
@@ -577,6 +585,7 @@ async function walletInitialized() {
   const importAddressInput = getElement('import_address_input')
   const importAddressNameInput = getElement('import_address_name_input')
   const identifyButton = getElement('identify_button')
+  const checkLoginButton = getElement('checklogin_button')
 
   const deployContract = getElement('deploy_contract')
 
@@ -619,19 +628,6 @@ async function walletInitialized() {
     identifyButton.disabled = true
   }
 
-  provider.on('accountsChanged', (accounts) => {
-    console.log('accountsChanged, accounts = ', accounts)
-    if (!accounts || !accounts.length || accounts.length === 0) {
-      return unAuthed()
-    }
-    authed(accounts[0])
-  })
-
-  provider.on('chainChanged', (chainId) => {
-    console.log('chainChanged called', chainId)
-    getElement('chainId').innerHTML = chainId
-  })
-
   try {
     provider.request({ method: 'anyweb_version' }).then((version) => {
       getElement('version').innerHTML = version
@@ -672,6 +668,19 @@ async function walletInitialized() {
     unAuthed()
     console.error('try 到错误了', e)
   }
+
+  provider.on('accountsChanged', (accounts) => {
+    console.log('accountsChanged, accounts = ', accounts)
+    if (!accounts || !accounts.length || accounts.length === 0) {
+      return unAuthed()
+    }
+    authed(accounts[0])
+  })
+
+  provider.on('chainChanged', (chainId) => {
+    console.log('chainChanged called', chainId)
+    getElement('chainId').innerHTML = chainId
+  })
 
   connectButton.onclick = async () => {
     const data = await provider.request({
@@ -914,6 +923,19 @@ async function walletInitialized() {
       console.log('err', err)
     }
   }
+
+  checkLoginButton.onclick = async () => {
+    try {
+      provider
+        .request({ method: 'anyweb_loginstate', params: [] })
+        .then((result) => {
+          getElement('checklogin_result').innerHTML = result
+          console.log('result', result)
+        })
+    } catch (err) {
+      console.log('err', err)
+    }
+  }
 }
 
 window.addEventListener('load', async () => {
@@ -927,10 +949,10 @@ window.addEventListener('load', async () => {
   }
 
   if (isAnyWebInstall()) {
+    console.log('DApp 已经检查到OK了')
     provider.request({ method: 'anyweb_version' }).then((version) => {
       getElement('version').innerHTML = version
     })
-    walletInitialized()
   } else {
     alert('找不到AnyWeb SDK, 请检查是否正确配置')
   }

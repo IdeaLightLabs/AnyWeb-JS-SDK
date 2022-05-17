@@ -6,6 +6,7 @@
 import {
   IAuthResult,
   IBaseProviderOptions,
+  IIframeData,
   IIframeOptions,
   IProvider,
   IProviderConnectInfo,
@@ -13,7 +14,7 @@ import {
   IProviderRpcError,
   IRequestArguments,
 } from './interface/provider'
-import { callIframe, createIframe } from './utils/common'
+import { callIframe, createIframe, isObject } from './utils/common'
 import config from '../package.json'
 import { AddressType, getAddressType } from './utils/address'
 import { ConsoleLike } from './utils/types'
@@ -27,9 +28,11 @@ import { ConsoleLike } from './utils/types'
  * const provider = new Provider()
  */
 export class Provider implements IProvider {
-  logger: ConsoleLike
-  public readonly appId: string
+  logger!: ConsoleLike
+  public readonly appId!: string
   private chainId = 1
+  private static instance: Provider
+  public static ready = false
 
   events: {
     onConnect?: (connectInfo: IProviderConnectInfo) => void
@@ -38,9 +41,15 @@ export class Provider implements IProvider {
     onAccountsChanged?: (accounts: string[]) => void
     onMessage?: (message: IProviderMessage) => void
     onNetworkChanged?: (networkId: string) => void
+    onReady?: () => void
   } = {}
 
   constructor({ logger, appId }: IBaseProviderOptions) {
+    if (Provider.instance) {
+      return Provider.instance
+    }
+    Provider.instance = this
+
     if (!logger) {
       logger = console
     }
@@ -58,9 +67,42 @@ export class Provider implements IProvider {
       window.anyweb = this
     }
 
+    const messageHandler = (event: MessageEvent) => {
+      if (
+        event.data &&
+        isObject(event.data) &&
+        'type' in event.data &&
+        event.data.type === 'anyweb'
+      ) {
+        const IframeData = event.data.data as IIframeData
+        if (
+          IframeData.type == 'event' &&
+          IframeData.data == 'ready' &&
+          IframeData.success
+        ) {
+          console.debug('[AnyWeb] SDK初始化完成')
+          Provider.ready = true
+          this.events.onReady && this.events.onReady()
+          window.removeEventListener('message', messageHandler)
+        }
+      }
+    }
+    window.addEventListener('message', messageHandler)
+
     createIframe('pages/index/home')
       .then()
       .catch((e) => console.error('[AnyWeb] createIframe error', e))
+  }
+
+  public static getInstance(params?: IBaseProviderOptions) {
+    if (!Provider.instance) {
+      if (params) {
+        Provider.instance = new Provider(params)
+      } else {
+        throw new Error('[AnyWeb] Provider is not initialized')
+      }
+    }
+    return Provider.instance
   }
 
   /**
@@ -125,6 +167,11 @@ export class Provider implements IProvider {
    * @protected
    */
   protected async rawRequest(method: string, params?: any): Promise<unknown> {
+    if (!Provider.ready) {
+      throw new Error(
+        "[AnyWeb] Provider is not ready, please use on('ready', callback) to listen to ready event"
+      )
+    }
     switch (method) {
       case 'cfx_requestAccounts':
         return this.rawRequest('cfx_accounts')
@@ -348,6 +395,9 @@ export class Provider implements IProvider {
         break
       case 'networkChanged':
         this.events.onNetworkChanged = listener
+        break
+      case 'ready':
+        this.events.onReady = listener
         break
       default:
         break

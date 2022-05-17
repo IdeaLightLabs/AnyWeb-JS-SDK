@@ -9,7 +9,7 @@
     "width=device-width, initial-scale=1">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="stylesheet" href=
-    "https://cdn.jsdelivr.net/npm/@picocss/pico@latest/css/pico.min.css">
+    "./pico.min.css">
   <!-- Place favicon.ico in the root directory -->
 </head>
 <body>
@@ -178,12 +178,22 @@
         Result: <span id="identify_result">N/A</span>
       </footer>
     </article>
+
+    <article>
+      <header>
+        检查登录状态
+      </header>
+      <button id="checklogin_button">检查
+      </button>
+      <footer>
+        Result: <span id="checklogin_result">N/A</span>
+      </footer>
+    </article>
   </div>
 
   <script>
     const now = new Date()
-    document.write(`<script type='text/javascript' src='../../dist/anyweb-js-sdk.umd.min.js?v=${now
-    .getFullYear()}${now.getMonth()}${now.getDate()}'><\/script>`);
+    document.write(`<script type='text/javascript' src='../../dist/anyweb-js-sdk.umd.min.js?v=${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}'><\/script>`);
   </script>
 
   <script type="module">
