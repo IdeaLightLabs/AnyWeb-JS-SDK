@@ -69,8 +69,9 @@ export interface IIframeOptions {
     params: string;
     chainId: number;
     scopes?: string[];
-    authType?: 'account' | 'createContract' | 'callContract' | 'createTransaction' | 'importAccount' | 'exit_accounts' | 'logout';
+    authType?: 'account' | 'createContract' | 'callContract' | 'createTransaction' | 'importAccount' | 'exit_accounts' | 'logout' | 'check_auth' | 'check_identify' | 'identify' | 'check_login';
     waitResult?: boolean;
+    silence?: boolean;
 }
 export interface IIframeData {
     type: 'event' | 'callback' | 'router' | 'default';

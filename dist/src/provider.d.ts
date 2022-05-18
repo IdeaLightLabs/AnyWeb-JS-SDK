@@ -16,6 +16,8 @@ export declare class Provider implements IProvider {
     logger: ConsoleLike;
     readonly appId: string;
     private chainId;
+    private static instance;
+    static ready: boolean;
     events: {
         onConnect?: (connectInfo: IProviderConnectInfo) => void;
         onDisconnect?: (error: IProviderRpcError) => void;
@@ -23,8 +25,10 @@ export declare class Provider implements IProvider {
         onAccountsChanged?: (accounts: string[]) => void;
         onMessage?: (message: IProviderMessage) => void;
         onNetworkChanged?: (networkId: string) => void;
+        onReady?: () => void;
     };
     constructor({ logger, appId }: IBaseProviderOptions);
+    static getInstance(params?: IBaseProviderOptions): Provider;
     /**
      * Deprecated: use `request` instead
      * @param arg

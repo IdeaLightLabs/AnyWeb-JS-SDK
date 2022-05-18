@@ -95,10 +95,8 @@ const isObject = (obj) => {
 exports.isObject = isObject;
 const closeIframe = (root) => {
     console.debug('[AnyWeb]', 'closeIframe', root.style);
-    setTimeout(() => {
-        setBodyScrollable();
-        root.style.display = 'none';
-    }, 100);
+    setBodyScrollable();
+    root.style.display = 'none';
 };
 const sendMessageToApp = ({ data, type, success = true, }) => {
     const iframe = document.getElementById('anyweb-iframe');
@@ -209,7 +207,7 @@ const createIframe = (url) => __awaiter(void 0, void 0, void 0, function* () {
     document.body.insertBefore(mask, document.body.firstElementChild);
 });
 exports.createIframe = createIframe;
-const getIframe = (url, onClose) => __awaiter(void 0, void 0, void 0, function* () {
+const getIframe = (url, onClose, silence = false) => __awaiter(void 0, void 0, void 0, function* () {
     if (!(document.getElementById('anyweb-iframe-mask') &&
         document.getElementById('anyweb-iframe'))) {
         console.warn('[AnyWeb] Something wrong with the iframe, recreating...');
@@ -223,17 +221,19 @@ const getIframe = (url, onClose) => __awaiter(void 0, void 0, void 0, function* 
         },
     });
     const mask = document.getElementById('anyweb-iframe-mask');
-    setTimeout(() => {
+    if (!silence) {
         mask.style.display = 'block';
         setBodyNonScrollable();
-    }, 100);
+    }
     return () => {
         onClose();
-        closeIframe(mask);
+        if (!silence) {
+            closeIframe(mask);
+        }
     };
 });
 exports.getIframe = getIframe;
-const callIframe = (path, { appId, params, chainId, scopes = [], authType, waitResult = true, }, provider) => __awaiter(void 0, void 0, void 0, function* () {
+const callIframe = (path, { appId, params, chainId, scopes = [], authType, waitResult = true, silence = false, }, provider) => __awaiter(void 0, void 0, void 0, function* () {
     if (waitResult) {
         return new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
             let callback = undefined;
@@ -241,10 +241,10 @@ const callIframe = (path, { appId, params, chainId, scopes = [], authType, waitR
                 if (timer) {
                     clearTimeout(timer);
                 }
-            });
+            }, silence);
             const timer = setTimeout(() => {
                 close();
-                reject(new Error('Timeout'));
+                reject('Timeout');
             }, 10 * 60 * 1000);
             // Set Listeners
             window.addEventListener('message', function receiveMessageFromIframePage(event) {
@@ -262,7 +262,7 @@ const callIframe = (path, { appId, params, chainId, scopes = [], authType, waitR
                             resolve(callback.data);
                         }
                         else {
-                            reject(new Error(callback.data));
+                            reject(callback.data);
                         }
                     }
                     else if (callback.type === 'event') {
@@ -287,7 +287,7 @@ const callIframe = (path, { appId, params, chainId, scopes = [], authType, waitR
     else {
         yield (0, exports.getIframe)(`${path}?appId=${appId}&authType=${authType}&random=${Math.floor(Math.random() * 1000)}&chainId=${chainId}&params=${params}&scopes=${JSON.stringify(scopes)}`, () => {
             return;
-        });
+        }, silence);
         return 'ok';
     }
 });
