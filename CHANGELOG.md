@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.11...v1.2.0) (2022-05-18)
+
+
+### Features
+
+* **single mode and support ready event:** single mode and support ready event ([44f5636](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/44f5636089453942dc2ac54fc93b0a32bd3a9955))
+
+
+### Bug Fixes
+
+* **support uniapp:** fix provider with uniapp ([420d8d9](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/420d8d9a4a2c116da3f3597c4ff8a77de17c8b0b))
+
 ### [1.1.11](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.10...v1.1.11) (2022-05-16)
 
 
