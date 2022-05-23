@@ -8,6 +8,7 @@ import {
   IIframeData,
   IIframeEventData,
   IIframeOptions,
+  IProviderRpcError,
 } from '../interface/provider'
 import { Provider } from '../provider'
 
@@ -197,6 +198,11 @@ export const createIframe = async (url: string) => {
 
   button.onclick = () => {
     closeIframe(mask)
+
+    throw new ProviderRpcError(
+      ProviderErrorCode.Unauthorized,
+      'User canceled the operation'
+    )
   }
   document.body.appendChild(style)
 
@@ -351,4 +357,26 @@ export const isArrEqual = <T>(arr1: T[], arr2: T[]) => {
 
 export const isIncluded = <T>(arr1: T[], arr2: T[]): boolean => {
   return arr1.length === new Set([...arr1, ...arr2]).size
+}
+
+export enum ProviderErrorCode {
+  UserRejectedRequest = 4001,
+  Unauthorized = 4100,
+  UnsupportedMethod = 4200,
+  Disconnected = 4900,
+  ChainDisconnected = 4901,
+  SDKNotReady = 5000,
+  ParamsError = 6000,
+}
+
+export class ProviderRpcError extends Error implements IProviderRpcError {
+  code: number
+  data?: unknown
+
+  constructor(code: ProviderErrorCode, message: string) {
+    super('[AnyWeb] ' + message)
+    console.debug(`[AnyWeb] Throw the error(${code}):` + message)
+    this.code = code
+    this.name = ProviderErrorCode[code]
+  }
 }

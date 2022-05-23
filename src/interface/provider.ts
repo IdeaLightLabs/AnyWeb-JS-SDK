@@ -19,15 +19,6 @@ export interface IBaseProviderOptions {
 }
 
 /**
- * Provider RPC Error
- */
-export interface IProviderRpcError extends Error {
-  message: string
-  code: number
-  data?: unknown
-}
-
-/**
  * Base Provider
  */
 export interface IProvider {

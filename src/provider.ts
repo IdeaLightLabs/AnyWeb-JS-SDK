@@ -14,7 +14,13 @@ import {
   IProviderRpcError,
   IRequestArguments,
 } from './interface/provider'
-import { callIframe, createIframe, isObject } from './utils/common'
+import {
+  callIframe,
+  createIframe,
+  isObject,
+  ProviderErrorCode,
+  ProviderRpcError,
+} from './utils/common'
 import config from '../package.json'
 import { AddressType, getAddressType } from './utils/address'
 import { ConsoleLike } from './utils/types'
@@ -99,7 +105,10 @@ export class Provider implements IProvider {
       if (params) {
         Provider.instance = new Provider(params)
       } else {
-        throw new Error('[AnyWeb] Provider is not initialized')
+        throw new ProviderRpcError(
+          ProviderErrorCode.SDKNotReady,
+          'Provider is not initialized'
+        )
       }
     }
     return Provider.instance
@@ -114,7 +123,10 @@ export class Provider implements IProvider {
     if (arg.length > 1) {
       return await this.request({ method: arg[0], params: arg[1] })
     }
-    throw new Error('Invalid arguments')
+    throw new ProviderRpcError(
+      ProviderErrorCode.ParamsError,
+      'Invalid arguments'
+    )
   }
 
   /**
@@ -139,12 +151,19 @@ export class Provider implements IProvider {
    */
   async request(args: IRequestArguments): Promise<unknown> {
     if (!args || typeof args !== 'object' || Array.isArray(args)) {
-      throw new Error('Invalid request arguments')
+      throw new ProviderRpcError(
+        ProviderErrorCode.ParamsError,
+        'Invalid request arguments'
+      )
     }
     const { method, params } = args
     if (!method || method.trim().length === 0) {
-      throw new Error('Method is required')
+      throw new ProviderRpcError(
+        ProviderErrorCode.ParamsError,
+        'Invalid request arguments: Method is required'
+      )
     }
+
     console.debug(`[AnyWeb] request ${method} with`, params)
     const result = await this.rawRequest(method, params)
     console.debug(`[AnyWeb] request(${method}):`, result)
@@ -168,8 +187,9 @@ export class Provider implements IProvider {
    */
   protected async rawRequest(method: string, params?: any): Promise<unknown> {
     if (!Provider.ready) {
-      throw new Error(
-        "[AnyWeb] Provider is not ready, please use on('ready', callback) to listen to ready event"
+      throw new ProviderRpcError(
+        ProviderErrorCode.SDKNotReady,
+        "Provider is not ready, please use on('ready', callback) to listen to ready event"
       )
     }
     switch (method) {
@@ -361,7 +381,10 @@ export class Provider implements IProvider {
           return false
         }
       default:
-        return 'Unsupported method'
+        throw new ProviderRpcError(
+          ProviderErrorCode.UnsupportedMethod,
+          'Unsupported Method: ' + method
+        )
     }
   }
 
