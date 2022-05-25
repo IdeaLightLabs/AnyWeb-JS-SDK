@@ -1,7 +1,7 @@
 // import js-conflux-sdk
 // more info about js-conflux-sdk
 // https://github.com/Conflux-Chain/js-conflux-sdk#readme
-import { Conflux, Drip } from 'https://cdn.skypack.dev/js-conflux-sdk'
+import { Conflux, Drip } from './js-conflux-sdk.js'
 
 const cusdtAddress = 'cfxtest:acepe88unk7fvs18436178up33hb4zkuf62a9dk1gv'
 const dappAddress = 'cfxtest:aca8paka2w86tpgmmh7ufdv005u2cheb76578khwd2'
