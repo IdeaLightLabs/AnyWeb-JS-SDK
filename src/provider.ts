@@ -277,8 +277,10 @@ export class Provider implements IProvider {
             this
           )
         } catch (e) {
-          console.error('[AnyWeb] Error to sendTransaction', e)
-          return e
+          throw new ProviderRpcError(
+            ProviderErrorCode.SendTransactionError,
+            'Error to sendTransaction: ' + e
+          )
         }
       case 'anyweb_importAccount':
         try {
@@ -293,8 +295,10 @@ export class Provider implements IProvider {
             this
           )
         } catch (e) {
-          console.error('[AnyWeb] Error to import Address', e)
-          return e
+          throw new ProviderRpcError(
+            ProviderErrorCode.ImportAddressError,
+            'Error to import Address: ' + e
+          )
         }
       case 'anyweb_version':
         return config.version

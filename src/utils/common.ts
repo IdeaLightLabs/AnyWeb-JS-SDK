@@ -367,6 +367,9 @@ export enum ProviderErrorCode {
   ChainDisconnected = 4901,
   SDKNotReady = 5000,
   ParamsError = 6000,
+  RequestError = 7000,
+  SendTransactionError = 7001,
+  ImportAddressError = 7002,
 }
 
 export class ProviderRpcError extends Error implements IProviderRpcError {
