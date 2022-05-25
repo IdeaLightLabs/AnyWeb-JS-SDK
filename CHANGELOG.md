@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.2.0...v1.2.1) (2022-05-25)
+
+
+### Features
+
+* **support error from app:** support throw the error message form the app ([78be87d](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/78be87d800c16b248a12cd7b0e2b995465785d87))
+
+
+### Bug Fixes
+
+* **error standard:** throw error standard ([11760fb](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/11760fbc9d194f84d8f1669376503641f509f3b8))
+
 ## [1.2.0](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.1.11...v1.2.0) (2022-05-18)
 
 
