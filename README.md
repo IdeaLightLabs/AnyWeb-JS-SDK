@@ -55,6 +55,8 @@ const provider = new Provider({
 });
 ```
 
+> logger可以传入null来禁用日志打印，或传入自定义的日志工具，默认为`window.console`
+
 ### UMD
 
 从 `anyweb-js-sdk` 的 `dist` 目录中进行引用 `umd` 版本.
