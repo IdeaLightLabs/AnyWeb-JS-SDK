@@ -1,3 +1,4 @@
+import { ConsoleLike } from './types';
 export declare enum AddressType {
     USER = "user",
     CONTRACT = "contract",
@@ -8,4 +9,4 @@ export declare enum AddressType {
  * Get the type of an address.
  * @param address
  */
-export declare const getAddressType: (address: string) => AddressType;
+export declare const getAddressType: (address: string, logger?: ConsoleLike) => AddressType;

@@ -34,7 +34,7 @@ import { ConsoleLike } from './utils/types'
  * const provider = new Provider()
  */
 export class Provider implements IProvider {
-  logger!: ConsoleLike
+  logger?: ConsoleLike
   public readonly appId!: string
   private chainId = 1
   private static instance: Provider
@@ -50,15 +50,12 @@ export class Provider implements IProvider {
     onReady?: () => void
   } = {}
 
-  constructor({ logger, appId }: IBaseProviderOptions) {
+  constructor({ logger = console, appId }: IBaseProviderOptions) {
     if (Provider.instance) {
       return Provider.instance
     }
     Provider.instance = this
 
-    if (!logger) {
-      logger = console
-    }
     this.logger = logger
     this.appId = appId
     // bind functions (to prevent consumers from making unbound calls)
@@ -86,7 +83,7 @@ export class Provider implements IProvider {
           IframeData.data == 'ready' &&
           IframeData.success
         ) {
-          console.debug('[AnyWeb] SDK初始化完成')
+          this.logger?.debug('[AnyWeb] SDK初始化完成')
           Provider.ready = true
           this.events.onReady && this.events.onReady()
           window.removeEventListener('message', messageHandler)
@@ -95,9 +92,9 @@ export class Provider implements IProvider {
     }
     window.addEventListener('message', messageHandler)
 
-    createIframe('pages/index/home')
+    createIframe('pages/index/home', this.logger)
       .then()
-      .catch((e) => console.error('[AnyWeb] createIframe error', e))
+      .catch((e) => this.logger?.error('[AnyWeb] createIframe error', e))
   }
 
   public static getInstance(params?: IBaseProviderOptions) {
@@ -119,7 +116,7 @@ export class Provider implements IProvider {
    * @param arg
    */
   async send(...arg: any[]) {
-    console.info('[AnyWeb] `send` is deprecated, use `request` instead')
+    this.logger?.info('[AnyWeb] `send` is deprecated, use `request` instead')
     if (arg.length > 1) {
       return await this.request({ method: arg[0], params: arg[1] })
     }
@@ -134,7 +131,10 @@ export class Provider implements IProvider {
    * @param arg
    */
   async call(...arg: any[]) {
-    console.info('[AnyWeb] `call` is deprecated, use `request` instead', arg)
+    this.logger?.info(
+      '[AnyWeb] `call` is deprecated, use `request` instead',
+      arg
+    )
     if (arg.length > 1) {
       return await this.request({ method: arg[0], params: arg[1] })
     } else {
@@ -164,9 +164,9 @@ export class Provider implements IProvider {
       )
     }
 
-    console.debug(`[AnyWeb] request ${method} with`, params)
+    this.logger?.debug(`[AnyWeb] request ${method} with`, params)
     const result = await this.rawRequest(method, params)
-    console.debug(`[AnyWeb] request(${method}):`, result)
+    this.logger?.debug(`[AnyWeb] request(${method}):`, result)
     return result
   }
 
@@ -185,6 +185,7 @@ export class Provider implements IProvider {
    * @param params
    * @protected
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected async rawRequest(method: string, params?: any): Promise<unknown> {
     if (!Provider.ready) {
       throw new ProviderRpcError(
@@ -196,7 +197,7 @@ export class Provider implements IProvider {
       case 'cfx_requestAccounts':
         return this.rawRequest('cfx_accounts')
       case 'cfx_accounts':
-        console.debug('[AnyWeb]', { params })
+        this.logger?.debug('[AnyWeb]', { params })
         const scopes = params[0].scopes
         let result: IAuthResult
         try {
@@ -212,9 +213,9 @@ export class Provider implements IProvider {
             },
             this
           )) as IAuthResult
-          console.debug('[AnyWeb]', 'silent auth result', result)
+          this.logger?.debug('[AnyWeb]', 'silent auth result', result)
         } catch (e) {
-          console.debug('[AnyWeb]', 'need to auth', e)
+          this.logger?.debug('[AnyWeb]', 'need to auth', e)
           result = (await callIframe(
             'pages/dapp/auth',
             {
@@ -253,7 +254,7 @@ export class Provider implements IProvider {
           const to = payload.to
           if (to) {
             authType =
-              getAddressType(to) === AddressType.CONTRACT
+              getAddressType(to, this.logger) === AddressType.CONTRACT
                 ? 'callContract'
                 : 'createTransaction'
           } else {
@@ -339,9 +340,13 @@ export class Provider implements IProvider {
             },
             this
           )
-          console.debug('[AnyWeb]', 'Check identify result', identifyResult)
+          this.logger?.debug(
+            '[AnyWeb]',
+            'Check identify result',
+            identifyResult
+          )
         } catch (e) {
-          console.debug('[AnyWeb]', 'need to identify', e)
+          this.logger?.debug('[AnyWeb]', 'need to identify', e)
           identifyResult = await callIframe(
             'pages/user/identify',
             {
@@ -381,7 +386,7 @@ export class Provider implements IProvider {
             this
           )
         } catch (e) {
-          console.debug('[AnyWeb]', 'need to login', e)
+          this.logger?.debug('[AnyWeb]', 'need to login', e)
           return false
         }
       default:
@@ -400,7 +405,7 @@ export class Provider implements IProvider {
    * provider.on('connected', listener)
    */
   on(type: string, listener: (...args: any[]) => void): void {
-    console.debug('[AnyWeb] on', {
+    this.logger?.debug('[AnyWeb] on', {
       type,
       listener,
     })
