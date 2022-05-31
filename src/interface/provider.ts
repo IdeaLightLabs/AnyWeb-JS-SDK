@@ -91,6 +91,7 @@ export interface IIframeData {
   type: 'event' | 'callback' | 'router' | 'default'
   data: unknown
   success?: boolean
+  message?: string
 }
 
 export interface IIframeEventData {

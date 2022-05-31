@@ -277,10 +277,11 @@ export class Provider implements IProvider {
             },
             this
           )
-        } catch (e) {
+        } catch (e: any) {
           throw new ProviderRpcError(
             ProviderErrorCode.SendTransactionError,
-            'Error to sendTransaction: ' + e
+            'Error to sendTransaction: ' + e.message,
+            e.data
           )
         }
       case 'anyweb_importAccount':
@@ -315,6 +316,8 @@ export class Provider implements IProvider {
           this
         )
       case 'exit_accounts':
+        return this.rawRequest('anyweb_revoke', params)
+      case 'anyweb_revoke':
         return await callIframe(
           'pages/dapp/auth',
           {

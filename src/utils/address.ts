@@ -11,6 +11,7 @@ export enum AddressType {
 /**
  * Get the type of an address.
  * @param address
+ * @param logger
  */
 export const getAddressType = (
   address: string,
