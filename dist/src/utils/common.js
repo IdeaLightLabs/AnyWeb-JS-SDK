@@ -28,7 +28,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isIncluded = exports.isArrEqual = exports.writeStorage = exports.callIframe = exports.getIframe = exports.createIframe = exports.sendMessageToApp = exports.isObject = exports.sha512 = exports.isFullScreen = exports.getFrameHeight = exports.getFrameWidth = void 0;
+exports.ProviderRpcError = exports.ProviderErrorCode = exports.isIncluded = exports.isArrEqual = exports.writeStorage = exports.callIframe = exports.getIframe = exports.createIframe = exports.sendMessageToApp = exports.isObject = exports.sha512 = exports.isFullScreen = exports.getFrameHeight = exports.getFrameWidth = void 0;
 /**
  * @author Littleor <me@littleor.cn>
  * @since 2022/2/11
@@ -93,8 +93,8 @@ const isObject = (obj) => {
     return Object.prototype.toString.call(obj) === '[object Object]';
 };
 exports.isObject = isObject;
-const closeIframe = (root) => {
-    console.debug('[AnyWeb]', 'closeIframe', root.style);
+const closeIframe = (root, logger) => {
+    logger === null || logger === void 0 ? void 0 : logger.debug('[AnyWeb]', 'closeIframe', root.style);
     setBodyScrollable();
     root.style.display = 'none';
 };
@@ -114,8 +114,8 @@ const sendMessageToApp = ({ data, type, success = true, }) => {
         }, '*');
 };
 exports.sendMessageToApp = sendMessageToApp;
-const createIframe = (url) => __awaiter(void 0, void 0, void 0, function* () {
-    console.debug('[AnyWeb] createIframe', url);
+const createIframe = (url, logger) => __awaiter(void 0, void 0, void 0, function* () {
+    logger === null || logger === void 0 ? void 0 : logger.debug('[AnyWeb] createIframe', url);
     const mask = document.createElement('div');
     const div = document.createElement('div');
     const iframe = document.createElement('iframe');
@@ -202,15 +202,16 @@ const createIframe = (url) => __awaiter(void 0, void 0, void 0, function* () {
     // setBodyScrollable()
     button.onclick = () => {
         closeIframe(mask);
+        throw new ProviderRpcError(ProviderErrorCode.Unauthorized, 'User canceled the operation');
     };
     document.body.appendChild(style);
     document.body.insertBefore(mask, document.body.firstElementChild);
 });
 exports.createIframe = createIframe;
-const getIframe = (url, onClose, silence = false) => __awaiter(void 0, void 0, void 0, function* () {
+const getIframe = (url, onClose, silence = false, logger) => __awaiter(void 0, void 0, void 0, function* () {
     if (!(document.getElementById('anyweb-iframe-mask') &&
         document.getElementById('anyweb-iframe'))) {
-        console.warn('[AnyWeb] Something wrong with the iframe, recreating...');
+        logger === null || logger === void 0 ? void 0 : logger.warn('[AnyWeb] Something wrong with the iframe, recreating...');
         yield (0, exports.createIframe)(url);
     }
     (0, exports.sendMessageToApp)({
@@ -248,11 +249,12 @@ const callIframe = (path, { appId, params, chainId, scopes = [], authType, waitR
             }, 10 * 60 * 1000);
             // Set Listeners
             window.addEventListener('message', function receiveMessageFromIframePage(event) {
+                var _a;
                 if (event.data &&
                     (0, exports.isObject)(event.data) &&
                     'type' in event.data &&
                     event.data.type === 'anyweb') {
-                    console.debug('[AnyWeb] SDK收到子页面信息: ', event.data);
+                    (_a = provider.logger) === null || _a === void 0 ? void 0 : _a.debug('[AnyWeb] SDK收到子页面信息: ', event.data);
                     callback = event.data.data;
                     if (callback.type === 'callback') {
                         window.removeEventListener('message', receiveMessageFromIframePage);
@@ -305,3 +307,25 @@ const isIncluded = (arr1, arr2) => {
     return arr1.length === new Set([...arr1, ...arr2]).size;
 };
 exports.isIncluded = isIncluded;
+var ProviderErrorCode;
+(function (ProviderErrorCode) {
+    ProviderErrorCode[ProviderErrorCode["UserRejectedRequest"] = 4001] = "UserRejectedRequest";
+    ProviderErrorCode[ProviderErrorCode["Unauthorized"] = 4100] = "Unauthorized";
+    ProviderErrorCode[ProviderErrorCode["UnsupportedMethod"] = 4200] = "UnsupportedMethod";
+    ProviderErrorCode[ProviderErrorCode["Disconnected"] = 4900] = "Disconnected";
+    ProviderErrorCode[ProviderErrorCode["ChainDisconnected"] = 4901] = "ChainDisconnected";
+    ProviderErrorCode[ProviderErrorCode["SDKNotReady"] = 5000] = "SDKNotReady";
+    ProviderErrorCode[ProviderErrorCode["ParamsError"] = 6000] = "ParamsError";
+    ProviderErrorCode[ProviderErrorCode["RequestError"] = 7000] = "RequestError";
+    ProviderErrorCode[ProviderErrorCode["SendTransactionError"] = 7001] = "SendTransactionError";
+    ProviderErrorCode[ProviderErrorCode["ImportAddressError"] = 7002] = "ImportAddressError";
+})(ProviderErrorCode = exports.ProviderErrorCode || (exports.ProviderErrorCode = {}));
+class ProviderRpcError extends Error {
+    constructor(code, message, logger = console) {
+        super('[AnyWeb] ' + message);
+        logger.debug(`[AnyWeb] Throw the error(${code}):` + message);
+        this.code = code;
+        this.name = ProviderErrorCode[code];
+    }
+}
+exports.ProviderRpcError = ProviderRpcError;

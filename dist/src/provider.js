@@ -29,16 +29,13 @@ const address_1 = require("./utils/address");
  * const provider = new Provider()
  */
 class Provider {
-    constructor({ logger, appId }) {
+    constructor({ logger = console, appId }) {
         this.chainId = 1;
         this.events = {};
         if (Provider.instance) {
             return Provider.instance;
         }
         Provider.instance = this;
-        if (!logger) {
-            logger = console;
-        }
         this.logger = logger;
         this.appId = appId;
         // bind functions (to prevent consumers from making unbound calls)
@@ -52,6 +49,7 @@ class Provider {
             window.anyweb = this;
         }
         const messageHandler = (event) => {
+            var _a;
             if (event.data &&
                 (0, common_1.isObject)(event.data) &&
                 'type' in event.data &&
@@ -60,7 +58,7 @@ class Provider {
                 if (IframeData.type == 'event' &&
                     IframeData.data == 'ready' &&
                     IframeData.success) {
-                    console.debug('[AnyWeb] SDK初始化完成');
+                    (_a = this.logger) === null || _a === void 0 ? void 0 : _a.debug('[AnyWeb] SDK初始化完成');
                     Provider.ready = true;
                     this.events.onReady && this.events.onReady();
                     window.removeEventListener('message', messageHandler);
@@ -68,9 +66,9 @@ class Provider {
             }
         };
         window.addEventListener('message', messageHandler);
-        (0, common_1.createIframe)('pages/index/home')
+        (0, common_1.createIframe)('pages/index/home', this.logger)
             .then()
-            .catch((e) => console.error('[AnyWeb] createIframe error', e));
+            .catch((e) => { var _a; return (_a = this.logger) === null || _a === void 0 ? void 0 : _a.error('[AnyWeb] createIframe error', e); });
     }
     static getInstance(params) {
         if (!Provider.instance) {
@@ -78,7 +76,7 @@ class Provider {
                 Provider.instance = new Provider(params);
             }
             else {
-                throw new Error('[AnyWeb] Provider is not initialized');
+                throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.SDKNotReady, 'Provider is not initialized');
             }
         }
         return Provider.instance;
@@ -88,12 +86,13 @@ class Provider {
      * @param arg
      */
     send(...arg) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            console.info('[AnyWeb] `send` is deprecated, use `request` instead');
+            (_a = this.logger) === null || _a === void 0 ? void 0 : _a.info('[AnyWeb] `send` is deprecated, use `request` instead');
             if (arg.length > 1) {
                 return yield this.request({ method: arg[0], params: arg[1] });
             }
-            throw new Error('Invalid arguments');
+            throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.ParamsError, 'Invalid arguments');
         });
     }
     /**
@@ -101,8 +100,9 @@ class Provider {
      * @param arg
      */
     call(...arg) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            console.info('[AnyWeb] `call` is deprecated, use `request` instead', arg);
+            (_a = this.logger) === null || _a === void 0 ? void 0 : _a.info('[AnyWeb] `call` is deprecated, use `request` instead', arg);
             if (arg.length > 1) {
                 return yield this.request({ method: arg[0], params: arg[1] });
             }
@@ -119,17 +119,18 @@ class Provider {
      * const result = await provider.request({ method: 'cfx_sendTransaction', params})
      */
     request(args) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             if (!args || typeof args !== 'object' || Array.isArray(args)) {
-                throw new Error('Invalid request arguments');
+                throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.ParamsError, 'Invalid request arguments');
             }
             const { method, params } = args;
             if (!method || method.trim().length === 0) {
-                throw new Error('Method is required');
+                throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.ParamsError, 'Invalid request arguments: Method is required');
             }
-            console.debug(`[AnyWeb] request ${method} with`, params);
+            (_a = this.logger) === null || _a === void 0 ? void 0 : _a.debug(`[AnyWeb] request ${method} with`, params);
             const result = yield this.rawRequest(method, params);
-            console.debug(`[AnyWeb] request(${method}):`, result);
+            (_b = this.logger) === null || _b === void 0 ? void 0 : _b.debug(`[AnyWeb] request(${method}):`, result);
             return result;
         });
     }
@@ -149,16 +150,18 @@ class Provider {
      * @param params
      * @protected
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rawRequest(method, params) {
+        var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function* () {
             if (!Provider.ready) {
-                throw new Error("[AnyWeb] Provider is not ready, please use on('ready', callback) to listen to ready event");
+                throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.SDKNotReady, "Provider is not ready, please use on('ready', callback) to listen to ready event");
             }
             switch (method) {
                 case 'cfx_requestAccounts':
                     return this.rawRequest('cfx_accounts');
                 case 'cfx_accounts':
-                    console.debug('[AnyWeb]', { params });
+                    (_a = this.logger) === null || _a === void 0 ? void 0 : _a.debug('[AnyWeb]', { params });
                     const scopes = params[0].scopes;
                     let result;
                     try {
@@ -170,10 +173,10 @@ class Provider {
                             scopes: scopes,
                             silence: true,
                         }, this));
-                        console.debug('[AnyWeb]', 'silent auth result', result);
+                        (_b = this.logger) === null || _b === void 0 ? void 0 : _b.debug('[AnyWeb]', 'silent auth result', result);
                     }
                     catch (e) {
-                        console.debug('[AnyWeb]', 'need to auth', e);
+                        (_c = this.logger) === null || _c === void 0 ? void 0 : _c.debug('[AnyWeb]', 'need to auth', e);
                         result = (yield (0, common_1.callIframe)('pages/dapp/auth', {
                             appId: this.appId,
                             params: params ? JSON.stringify(params[0]) : '',
@@ -208,7 +211,7 @@ class Provider {
                         const to = payload.to;
                         if (to) {
                             authType =
-                                (0, address_1.getAddressType)(to) === address_1.AddressType.CONTRACT
+                                (0, address_1.getAddressType)(to, this.logger) === address_1.AddressType.CONTRACT
                                     ? 'callContract'
                                     : 'createTransaction';
                         }
@@ -229,8 +232,7 @@ class Provider {
                         }, this);
                     }
                     catch (e) {
-                        console.error('[AnyWeb] Error to sendTransaction', e);
-                        return e;
+                        throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.SendTransactionError, 'Error to sendTransaction: ' + e);
                     }
                 case 'anyweb_importAccount':
                     try {
@@ -242,8 +244,7 @@ class Provider {
                         }, this);
                     }
                     catch (e) {
-                        console.error('[AnyWeb] Error to import Address', e);
-                        return e;
+                        throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.ImportAddressError, 'Error to import Address: ' + e);
                     }
                 case 'anyweb_version':
                     return package_json_1.default.version;
@@ -272,10 +273,10 @@ class Provider {
                             authType: 'check_identify',
                             silence: true,
                         }, this);
-                        console.debug('[AnyWeb]', 'Check identify result', identifyResult);
+                        (_d = this.logger) === null || _d === void 0 ? void 0 : _d.debug('[AnyWeb]', 'Check identify result', identifyResult);
                     }
                     catch (e) {
-                        console.debug('[AnyWeb]', 'need to identify', e);
+                        (_e = this.logger) === null || _e === void 0 ? void 0 : _e.debug('[AnyWeb]', 'need to identify', e);
                         identifyResult = yield (0, common_1.callIframe)('pages/user/identify', {
                             appId: this.appId,
                             chainId: this.chainId,
@@ -304,11 +305,11 @@ class Provider {
                         }, this);
                     }
                     catch (e) {
-                        console.debug('[AnyWeb]', 'need to login', e);
+                        (_f = this.logger) === null || _f === void 0 ? void 0 : _f.debug('[AnyWeb]', 'need to login', e);
                         return false;
                     }
                 default:
-                    return 'Unsupported method';
+                    throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.UnsupportedMethod, 'Unsupported Method: ' + method);
             }
         });
     }
@@ -320,7 +321,8 @@ class Provider {
      * provider.on('connected', listener)
      */
     on(type, listener) {
-        console.debug('[AnyWeb] on', {
+        var _a;
+        (_a = this.logger) === null || _a === void 0 ? void 0 : _a.debug('[AnyWeb] on', {
             type,
             listener,
         });

@@ -8,20 +8,12 @@ import { ConsoleLike } from '../utils/types';
  */
 export interface IRequestArguments {
     readonly method: string;
-    readonly params?: any;
+    readonly params?: unknown;
     readonly chainId?: number;
 }
 export interface IBaseProviderOptions {
     logger?: ConsoleLike;
     appId: string;
-}
-/**
- * Provider RPC Error
- */
-export interface IProviderRpcError extends Error {
-    message: string;
-    code: number;
-    data?: unknown;
 }
 /**
  * Base Provider

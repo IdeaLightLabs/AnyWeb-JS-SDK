@@ -13,9 +13,9 @@ var AddressType;
  * Get the type of an address.
  * @param address
  */
-const getAddressType = (address) => {
+const getAddressType = (address, logger = console) => {
     const decodeResult = (0, conflux_address_js_1.decode)(address);
-    console.debug('[AnyWeb] decodeResult', decodeResult);
+    logger.debug('[AnyWeb] decodeResult', decodeResult);
     if (Object.keys(decodeResult).includes('type')) {
         return decodeResult.type;
     }

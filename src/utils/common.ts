@@ -11,6 +11,7 @@ import {
   IProviderRpcError,
 } from '../interface/provider'
 import { Provider } from '../provider'
+import { ConsoleLike } from './types'
 
 export const getFrameWidth = () => {
   if (window.innerHeight < 736) {
@@ -76,8 +77,8 @@ export const isObject = (obj: unknown) => {
   return Object.prototype.toString.call(obj) === '[object Object]'
 }
 
-const closeIframe = (root: HTMLDivElement) => {
-  console.debug('[AnyWeb]', 'closeIframe', root.style)
+const closeIframe = (root: HTMLDivElement, logger?: ConsoleLike) => {
+  logger?.debug('[AnyWeb]', 'closeIframe', root.style)
   setBodyScrollable()
   root.style.display = 'none'
 }
@@ -106,8 +107,8 @@ export const sendMessageToApp = ({
     )
 }
 
-export const createIframe = async (url: string) => {
-  console.debug('[AnyWeb] createIframe', url)
+export const createIframe = async (url: string, logger?: ConsoleLike) => {
+  logger?.debug('[AnyWeb] createIframe', url)
   const mask = document.createElement('div')
   const div = document.createElement('div')
   const iframe = document.createElement('iframe')
@@ -212,7 +213,8 @@ export const createIframe = async (url: string) => {
 export const getIframe = async (
   url: string,
   onClose: () => void,
-  silence = false
+  silence = false,
+  logger?: ConsoleLike
 ): Promise<() => void> => {
   if (
     !(
@@ -220,7 +222,7 @@ export const getIframe = async (
       document.getElementById('anyweb-iframe')
     )
   ) {
-    console.warn('[AnyWeb] Something wrong with the iframe, recreating...')
+    logger?.warn('[AnyWeb] Something wrong with the iframe, recreating...')
     await createIframe(url)
   }
   sendMessageToApp({
@@ -287,7 +289,7 @@ export const callIframe = async (
             'type' in event.data &&
             event.data.type === 'anyweb'
           ) {
-            console.debug('[AnyWeb] SDK收到子页面信息: ', event.data)
+            provider.logger?.debug('[AnyWeb] SDK收到子页面信息: ', event.data)
             callback = event.data.data as IIframeData
 
             if (callback.type === 'callback') {
@@ -376,9 +378,13 @@ export class ProviderRpcError extends Error implements IProviderRpcError {
   code: number
   data?: unknown
 
-  constructor(code: ProviderErrorCode, message: string) {
+  constructor(
+    code: ProviderErrorCode,
+    message: string,
+    logger: ConsoleLike = console
+  ) {
     super('[AnyWeb] ' + message)
-    console.debug(`[AnyWeb] Throw the error(${code}):` + message)
+    logger.debug(`[AnyWeb] Throw the error(${code}):` + message)
     this.code = code
     this.name = ProviderErrorCode[code]
   }

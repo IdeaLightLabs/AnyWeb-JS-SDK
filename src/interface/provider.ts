@@ -9,7 +9,7 @@ import { ConsoleLike } from '../utils/types'
  */
 export interface IRequestArguments {
   readonly method: string
-  readonly params?: any
+  readonly params?: unknown
   readonly chainId?: number
 }
 
