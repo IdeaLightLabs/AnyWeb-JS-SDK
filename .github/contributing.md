@@ -53,7 +53,6 @@ A high level overview of tools used:
 
 - [TypeScript](https://www.typescriptlang.org/) as the development language
 - [Babel](https://babeljs.io) for bundling
-- [Jest](https://jestjs.io/) for unit testing
 - [Prettier](https://prettier.io/) for code formatting
 
 ## Scripts

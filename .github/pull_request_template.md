@@ -20,8 +20,6 @@ Closes [issue link]
 ### Check off the following:
 
 - [ ] I have read the [CONTRIBUTING.md](./contributing.md).
-- [ ] I have write the unit test.
-- [ ] I have pass the `yarn test`.
 - [ ] I have pass the `yarn lint`.
 
 
