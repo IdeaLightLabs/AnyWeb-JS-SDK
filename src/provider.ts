@@ -193,62 +193,62 @@ export class Provider implements IProvider {
         "Provider is not ready, please use on('ready', callback) to listen to ready event"
       )
     }
-    switch (method) {
-      case 'cfx_requestAccounts':
-        return this.rawRequest('cfx_accounts')
-      case 'cfx_accounts':
-        this.logger?.debug('[AnyWeb]', { params })
-        const scopes = params[0].scopes
-        let result: IAuthResult
-        try {
-          result = (await callIframe(
-            'pages/dapp/auth',
-            {
-              appId: this.appId,
-              params: params ? JSON.stringify(params[0]) : '',
-              chainId: this.chainId,
-              authType: 'check_auth',
-              scopes: scopes,
-              silence: true,
-            },
-            this
-          )) as IAuthResult
-          this.logger?.debug('[AnyWeb]', 'silent auth result', result)
-        } catch (e) {
-          this.logger?.debug('[AnyWeb]', 'need to auth', e)
-          result = (await callIframe(
-            'pages/dapp/auth',
-            {
-              appId: this.appId,
-              params: params ? JSON.stringify(params[0]) : '',
-              chainId: this.chainId,
-              authType: 'account',
-              scopes: scopes,
-            },
-            this
-          )) as IAuthResult
-        }
-
-        result.scopes = scopes
-        this.events.onAccountsChanged &&
-          this.events.onAccountsChanged(result.address)
-        this.events.onChainChanged &&
-          this.events.onChainChanged(String(result.chainId))
-        this.events.onNetworkChanged &&
-          this.events.onNetworkChanged(String(result.networkId))
-        if (scopes.length > 0) {
-          return {
-            address: result.address,
-            code: result.code,
-            scopes: scopes,
-            chainId: result.chainId,
-            networkId: result.networkId,
+    try {
+      switch (method) {
+        case 'cfx_requestAccounts':
+          return this.rawRequest('cfx_accounts')
+        case 'cfx_accounts':
+          this.logger?.debug('[AnyWeb]', { params })
+          const scopes = params[0].scopes
+          let result: IAuthResult
+          try {
+            result = (await callIframe(
+              'pages/dapp/auth',
+              {
+                appId: this.appId,
+                params: params ? JSON.stringify(params[0]) : '',
+                chainId: this.chainId,
+                authType: 'check_auth',
+                scopes: scopes,
+                silence: true,
+              },
+              this
+            )) as IAuthResult
+            this.logger?.debug('[AnyWeb]', 'silent auth result', result)
+          } catch (e) {
+            this.logger?.debug('[AnyWeb]', 'need to auth', e)
+            result = (await callIframe(
+              'pages/dapp/auth',
+              {
+                appId: this.appId,
+                params: params ? JSON.stringify(params[0]) : '',
+                chainId: this.chainId,
+                authType: 'account',
+                scopes: scopes,
+              },
+              this
+            )) as IAuthResult
           }
-        } else {
-          return false
-        }
-      case 'cfx_sendTransaction':
-        try {
+
+          result.scopes = scopes
+          this.events.onAccountsChanged &&
+            this.events.onAccountsChanged(result.address)
+          this.events.onChainChanged &&
+            this.events.onChainChanged(String(result.chainId))
+          this.events.onNetworkChanged &&
+            this.events.onNetworkChanged(String(result.networkId))
+          if (scopes.length > 0) {
+            return {
+              address: result.address,
+              code: result.code,
+              scopes: scopes,
+              chainId: result.chainId,
+              networkId: result.networkId,
+            }
+          } else {
+            return false
+          }
+        case 'cfx_sendTransaction':
           let authType: IIframeOptions['authType']
           const payload = params[0]
           const to = payload.to
@@ -261,7 +261,6 @@ export class Provider implements IProvider {
             authType = 'createContract'
           }
 
-          // createContract
           return await callIframe(
             'pages/dapp/auth',
             {
@@ -277,15 +276,7 @@ export class Provider implements IProvider {
             },
             this
           )
-        } catch (e: any) {
-          throw new ProviderRpcError(
-            ProviderErrorCode.SendTransactionError,
-            'Error to sendTransaction: ' + e.message,
-            e.data
-          )
-        }
-      case 'anyweb_importAccount':
-        try {
+        case 'anyweb_importAccount':
           return await callIframe(
             'pages/dapp/auth',
             {
@@ -296,107 +287,113 @@ export class Provider implements IProvider {
             },
             this
           )
-        } catch (e) {
-          throw new ProviderRpcError(
-            ProviderErrorCode.ImportAddressError,
-            'Error to import Address: ' + e
-          )
-        }
-      case 'anyweb_version':
-        return config.version
-      case 'anyweb_home':
-        return await callIframe(
-          'pages/index/home',
-          {
-            appId: this.appId,
-            chainId: this.chainId,
-            params: params ? JSON.stringify(params) : '',
-            waitResult: false,
-          },
-          this
-        )
-      case 'exit_accounts':
-        return this.rawRequest('anyweb_revoke', params)
-      case 'anyweb_revoke':
-        return await callIframe(
-          'pages/dapp/auth',
-          {
-            appId: this.appId,
-            chainId: this.chainId,
-            params: params ? JSON.stringify(params) : '',
-            authType: 'exit_accounts',
-            silence: true,
-          },
-          this
-        )
-      case 'anyweb_identify':
-        let identifyResult
-        try {
-          identifyResult = await callIframe(
-            'pages/user/identify',
+        case 'anyweb_version':
+          return config.version
+        case 'anyweb_home':
+          return await callIframe(
+            'pages/index/home',
             {
               appId: this.appId,
               chainId: this.chainId,
               params: params ? JSON.stringify(params) : '',
-              authType: 'check_identify',
-              silence: true,
+              waitResult: false,
             },
             this
           )
-          this.logger?.debug(
-            '[AnyWeb]',
-            'Check identify result',
-            identifyResult
-          )
-        } catch (e) {
-          this.logger?.debug('[AnyWeb]', 'need to identify', e)
-          identifyResult = await callIframe(
-            'pages/user/identify',
-            {
-              appId: this.appId,
-              chainId: this.chainId,
-              params: params ? JSON.stringify(params) : '',
-              authType: 'identify',
-            },
-            this
-          )
-        }
-        return identifyResult
-      case 'anyweb_logout':
-        // Logout the account of AnyWeb
-        return await callIframe(
-          'pages/dapp/auth',
-          {
-            appId: this.appId,
-            chainId: this.chainId,
-            params: params ? JSON.stringify(params) : '',
-            authType: 'logout',
-            silence: true,
-          },
-          this
-        )
-      case 'anyweb_loginstate':
-        try {
+        case 'exit_accounts':
+          return this.rawRequest('anyweb_revoke', params)
+        case 'anyweb_revoke':
           return await callIframe(
             'pages/dapp/auth',
             {
               appId: this.appId,
-              params: '',
               chainId: this.chainId,
-              authType: 'check_login',
+              params: params ? JSON.stringify(params) : '',
+              authType: 'exit_accounts',
               silence: true,
             },
             this
           )
-        } catch (e) {
-          this.logger?.debug('[AnyWeb]', 'need to login', e)
-          return false
-        }
-      default:
-        throw new ProviderRpcError(
-          ProviderErrorCode.UnsupportedMethod,
-          'Unsupported Method: ' + method
-        )
+        case 'anyweb_identify':
+          let identifyResult
+          try {
+            identifyResult = await callIframe(
+              'pages/user/identify',
+              {
+                appId: this.appId,
+                chainId: this.chainId,
+                params: params ? JSON.stringify(params) : '',
+                authType: 'check_identify',
+                silence: true,
+              },
+              this
+            )
+            this.logger?.debug(
+              '[AnyWeb]',
+              'Check identify result',
+              identifyResult
+            )
+          } catch (e) {
+            this.logger?.debug('[AnyWeb]', 'need to identify', e)
+            identifyResult = await callIframe(
+              'pages/user/identify',
+              {
+                appId: this.appId,
+                chainId: this.chainId,
+                params: params ? JSON.stringify(params) : '',
+                authType: 'identify',
+              },
+              this
+            )
+          }
+          return identifyResult
+        case 'anyweb_logout':
+          // Logout the account of AnyWeb
+          return await callIframe(
+            'pages/dapp/auth',
+            {
+              appId: this.appId,
+              chainId: this.chainId,
+              params: params ? JSON.stringify(params) : '',
+              authType: 'logout',
+              silence: true,
+            },
+            this
+          )
+        case 'anyweb_loginstate':
+          try {
+            return await callIframe(
+              'pages/dapp/auth',
+              {
+                appId: this.appId,
+                params: '',
+                chainId: this.chainId,
+                authType: 'check_login',
+                silence: true,
+              },
+              this
+            )
+          } catch (e) {
+            this.logger?.debug('[AnyWeb]', 'need to login', e)
+            return false
+          }
+        default:
+          throw new ProviderRpcError(
+            ProviderErrorCode.UnsupportedMethod,
+            'Unsupported Method: ' + method
+          )
+      }
+    } catch (e: any) {
+      // const codeList = {
+      //   cfx_sendTransaction: ProviderErrorCode.SendTransactionError,
+      //   anyweb_importAccount: ProviderErrorCode.ImportAddressError,
+      // }
+      this.logger?.info(`Error when handler request '${method}'!`)
+      throw new ProviderRpcError(
+        ProviderErrorCode.RequestError,
+        isObject(e) && 'message' in e ? e.message : e,
+        isObject(e) && 'data' in e ? e.data : {}
+      )
     }
   }
 

@@ -92,6 +92,7 @@ export interface IIframeData {
   data: unknown
   success?: boolean
   message?: string
+  code: number
 }
 
 export interface IIframeEventData {

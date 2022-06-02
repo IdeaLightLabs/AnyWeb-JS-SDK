@@ -806,7 +806,12 @@ async function walletInitialized() {
           console.log('result', result)
         })
         .catch((e) => {
-          console.error('合约调用失败', e)
+          getElement('gateway_test_result').innerHTML = `
+            Code: ${e.code},\n
+            Message: ${e.message},\n
+            Data: ${e.data}\n 
+          `
+          console.error('合约调用失败', { message: e.message, data: e.data })
         })
     } catch (err) {
       console.log('err', err)

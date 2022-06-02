@@ -86,6 +86,7 @@ export const sendMessageToApp = ({
   data,
   type,
   success = true,
+  code = 0,
 }: IIframeData) => {
   const iframe: HTMLIFrameElement | null = document.getElementById(
     'anyweb-iframe'
@@ -100,6 +101,7 @@ export const sendMessageToApp = ({
           data,
           type,
           success,
+          code,
         },
         type: 'anyweb',
       },
@@ -231,6 +233,7 @@ export const getIframe = async (
       path: `/${url}`,
       mode: 'redirectTo',
     },
+    code: 0,
   })
   const mask = document.getElementById('anyweb-iframe-mask') as HTMLDivElement
   if (!silence) {
@@ -276,7 +279,11 @@ export const callIframe = async (
       )
       const timer = setTimeout(() => {
         close()
-        reject('Timeout')
+        reject({
+          code: ProviderErrorCode.SDKTimeOut,
+          message: 'Timeout',
+          data: {},
+        })
       }, 10 * 60 * 1000)
 
       // Set Listeners
@@ -302,7 +309,11 @@ export const callIframe = async (
               if (callback.success) {
                 resolve(callback.data)
               } else {
-                reject(callback.data as string)
+                reject({
+                  code: callback.code,
+                  message: callback.message as string,
+                  data: callback.data || {},
+                })
               }
             } else if (callback.type === 'event') {
               const eventData = callback.data as IIframeEventData
@@ -368,6 +379,7 @@ export enum ProviderErrorCode {
   Disconnected = 4900,
   ChainDisconnected = 4901,
   SDKNotReady = 5000,
+  SDKTimeOut = 5001,
   ParamsError = 6000,
   RequestError = 7000,
   SendTransactionError = 7001,
@@ -381,11 +393,19 @@ export class ProviderRpcError extends Error implements IProviderRpcError {
   constructor(
     code: ProviderErrorCode,
     message: string,
+    data = {},
     logger: ConsoleLike = console
   ) {
-    super('[AnyWeb] ' + message)
-    logger.debug(`[AnyWeb] Throw the error(${code}):` + message)
+    super(message)
+    logger.error(
+      `[AnyWeb] Throw the error(${code}):`,
+      '\n Message: ',
+      message,
+      '\n Data: ',
+      data
+    )
     this.code = code
     this.name = ProviderErrorCode[code]
+    this.data = data
   }
 }
