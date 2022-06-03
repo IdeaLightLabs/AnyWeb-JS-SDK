@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.2.1...v1.2.2) (2022-06-03)
+
+
+### Features
+
+* **support error message and data:** support get error message and data from the SDK ([5974d18](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/5974d188b722613c12237d8d9d77498cb5cd243d))
+
+
+### Bug Fixes
+
+* **conflux sdk:** download the conflux js sdk to local ([976758a](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/976758a4630d47cacc64875ca1ba5f30f0071dbf))
+
 ### [1.2.1](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.2.0...v1.2.1) (2022-05-25)
 
 
