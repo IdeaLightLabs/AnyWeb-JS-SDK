@@ -152,60 +152,60 @@ class Provider {
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rawRequest(method, params) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g;
         return __awaiter(this, void 0, void 0, function* () {
             if (!Provider.ready) {
                 throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.SDKNotReady, "Provider is not ready, please use on('ready', callback) to listen to ready event");
             }
-            switch (method) {
-                case 'cfx_requestAccounts':
-                    return this.rawRequest('cfx_accounts');
-                case 'cfx_accounts':
-                    (_a = this.logger) === null || _a === void 0 ? void 0 : _a.debug('[AnyWeb]', { params });
-                    const scopes = params[0].scopes;
-                    let result;
-                    try {
-                        result = (yield (0, common_1.callIframe)('pages/dapp/auth', {
-                            appId: this.appId,
-                            params: params ? JSON.stringify(params[0]) : '',
-                            chainId: this.chainId,
-                            authType: 'check_auth',
-                            scopes: scopes,
-                            silence: true,
-                        }, this));
-                        (_b = this.logger) === null || _b === void 0 ? void 0 : _b.debug('[AnyWeb]', 'silent auth result', result);
-                    }
-                    catch (e) {
-                        (_c = this.logger) === null || _c === void 0 ? void 0 : _c.debug('[AnyWeb]', 'need to auth', e);
-                        result = (yield (0, common_1.callIframe)('pages/dapp/auth', {
-                            appId: this.appId,
-                            params: params ? JSON.stringify(params[0]) : '',
-                            chainId: this.chainId,
-                            authType: 'account',
-                            scopes: scopes,
-                        }, this));
-                    }
-                    result.scopes = scopes;
-                    this.events.onAccountsChanged &&
-                        this.events.onAccountsChanged(result.address);
-                    this.events.onChainChanged &&
-                        this.events.onChainChanged(String(result.chainId));
-                    this.events.onNetworkChanged &&
-                        this.events.onNetworkChanged(String(result.networkId));
-                    if (scopes.length > 0) {
-                        return {
-                            address: result.address,
-                            code: result.code,
-                            scopes: scopes,
-                            chainId: result.chainId,
-                            networkId: result.networkId,
-                        };
-                    }
-                    else {
-                        return false;
-                    }
-                case 'cfx_sendTransaction':
-                    try {
+            try {
+                switch (method) {
+                    case 'cfx_requestAccounts':
+                        return this.rawRequest('cfx_accounts');
+                    case 'cfx_accounts':
+                        (_a = this.logger) === null || _a === void 0 ? void 0 : _a.debug('[AnyWeb]', { params });
+                        const scopes = params[0].scopes;
+                        let result;
+                        try {
+                            result = (yield (0, common_1.callIframe)('pages/dapp/auth', {
+                                appId: this.appId,
+                                params: params ? JSON.stringify(params[0]) : '',
+                                chainId: this.chainId,
+                                authType: 'check_auth',
+                                scopes: scopes,
+                                silence: true,
+                            }, this));
+                            (_b = this.logger) === null || _b === void 0 ? void 0 : _b.debug('[AnyWeb]', 'silent auth result', result);
+                        }
+                        catch (e) {
+                            (_c = this.logger) === null || _c === void 0 ? void 0 : _c.debug('[AnyWeb]', 'need to auth', e);
+                            result = (yield (0, common_1.callIframe)('pages/dapp/auth', {
+                                appId: this.appId,
+                                params: params ? JSON.stringify(params[0]) : '',
+                                chainId: this.chainId,
+                                authType: 'account',
+                                scopes: scopes,
+                            }, this));
+                        }
+                        result.scopes = scopes;
+                        this.events.onAccountsChanged &&
+                            this.events.onAccountsChanged(result.address);
+                        this.events.onChainChanged &&
+                            this.events.onChainChanged(String(result.chainId));
+                        this.events.onNetworkChanged &&
+                            this.events.onNetworkChanged(String(result.networkId));
+                        if (scopes.length > 0) {
+                            return {
+                                address: result.address,
+                                code: result.code,
+                                scopes: scopes,
+                                chainId: result.chainId,
+                                networkId: result.networkId,
+                            };
+                        }
+                        else {
+                            return false;
+                        }
+                    case 'cfx_sendTransaction':
                         let authType;
                         const payload = params[0];
                         const to = payload.to;
@@ -218,7 +218,6 @@ class Provider {
                         else {
                             authType = 'createContract';
                         }
-                        // createContract
                         return yield (0, common_1.callIframe)('pages/dapp/auth', {
                             appId: this.appId,
                             chainId: this.chainId,
@@ -230,86 +229,88 @@ class Provider {
                                 : '',
                             authType: authType,
                         }, this);
-                    }
-                    catch (e) {
-                        throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.SendTransactionError, 'Error to sendTransaction: ' + e);
-                    }
-                case 'anyweb_importAccount':
-                    try {
+                    case 'anyweb_importAccount':
                         return yield (0, common_1.callIframe)('pages/dapp/auth', {
                             appId: this.appId,
                             chainId: this.chainId,
                             params: params ? JSON.stringify(params[0]) : JSON.stringify({}),
                             authType: 'importAccount',
                         }, this);
-                    }
-                    catch (e) {
-                        throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.ImportAddressError, 'Error to import Address: ' + e);
-                    }
-                case 'anyweb_version':
-                    return package_json_1.default.version;
-                case 'anyweb_home':
-                    return yield (0, common_1.callIframe)('pages/index/home', {
-                        appId: this.appId,
-                        chainId: this.chainId,
-                        params: params ? JSON.stringify(params) : '',
-                        waitResult: false,
-                    }, this);
-                case 'exit_accounts':
-                    return yield (0, common_1.callIframe)('pages/dapp/auth', {
-                        appId: this.appId,
-                        chainId: this.chainId,
-                        params: params ? JSON.stringify(params) : '',
-                        authType: 'exit_accounts',
-                        silence: true,
-                    }, this);
-                case 'anyweb_identify':
-                    let identifyResult;
-                    try {
-                        identifyResult = yield (0, common_1.callIframe)('pages/user/identify', {
+                    case 'anyweb_version':
+                        return package_json_1.default.version;
+                    case 'anyweb_home':
+                        return yield (0, common_1.callIframe)('pages/index/home', {
                             appId: this.appId,
                             chainId: this.chainId,
                             params: params ? JSON.stringify(params) : '',
-                            authType: 'check_identify',
-                            silence: true,
+                            waitResult: false,
                         }, this);
-                        (_d = this.logger) === null || _d === void 0 ? void 0 : _d.debug('[AnyWeb]', 'Check identify result', identifyResult);
-                    }
-                    catch (e) {
-                        (_e = this.logger) === null || _e === void 0 ? void 0 : _e.debug('[AnyWeb]', 'need to identify', e);
-                        identifyResult = yield (0, common_1.callIframe)('pages/user/identify', {
-                            appId: this.appId,
-                            chainId: this.chainId,
-                            params: params ? JSON.stringify(params) : '',
-                            authType: 'identify',
-                        }, this);
-                    }
-                    return identifyResult;
-                case 'anyweb_logout':
-                    // Logout the account of AnyWeb
-                    return yield (0, common_1.callIframe)('pages/dapp/auth', {
-                        appId: this.appId,
-                        chainId: this.chainId,
-                        params: params ? JSON.stringify(params) : '',
-                        authType: 'logout',
-                        silence: true,
-                    }, this);
-                case 'anyweb_loginstate':
-                    try {
+                    case 'exit_accounts':
+                        return this.rawRequest('anyweb_revoke', params);
+                    case 'anyweb_revoke':
                         return yield (0, common_1.callIframe)('pages/dapp/auth', {
                             appId: this.appId,
-                            params: '',
                             chainId: this.chainId,
-                            authType: 'check_login',
+                            params: params ? JSON.stringify(params) : '',
+                            authType: 'exit_accounts',
                             silence: true,
                         }, this);
-                    }
-                    catch (e) {
-                        (_f = this.logger) === null || _f === void 0 ? void 0 : _f.debug('[AnyWeb]', 'need to login', e);
-                        return false;
-                    }
-                default:
-                    throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.UnsupportedMethod, 'Unsupported Method: ' + method);
+                    case 'anyweb_identify':
+                        let identifyResult;
+                        try {
+                            identifyResult = yield (0, common_1.callIframe)('pages/user/identify', {
+                                appId: this.appId,
+                                chainId: this.chainId,
+                                params: params ? JSON.stringify(params) : '',
+                                authType: 'check_identify',
+                                silence: true,
+                            }, this);
+                            (_d = this.logger) === null || _d === void 0 ? void 0 : _d.debug('[AnyWeb]', 'Check identify result', identifyResult);
+                        }
+                        catch (e) {
+                            (_e = this.logger) === null || _e === void 0 ? void 0 : _e.debug('[AnyWeb]', 'need to identify', e);
+                            identifyResult = yield (0, common_1.callIframe)('pages/user/identify', {
+                                appId: this.appId,
+                                chainId: this.chainId,
+                                params: params ? JSON.stringify(params) : '',
+                                authType: 'identify',
+                            }, this);
+                        }
+                        return identifyResult;
+                    case 'anyweb_logout':
+                        // Logout the account of AnyWeb
+                        return yield (0, common_1.callIframe)('pages/dapp/auth', {
+                            appId: this.appId,
+                            chainId: this.chainId,
+                            params: params ? JSON.stringify(params) : '',
+                            authType: 'logout',
+                            silence: true,
+                        }, this);
+                    case 'anyweb_loginstate':
+                        try {
+                            return yield (0, common_1.callIframe)('pages/dapp/auth', {
+                                appId: this.appId,
+                                params: '',
+                                chainId: this.chainId,
+                                authType: 'check_login',
+                                silence: true,
+                            }, this);
+                        }
+                        catch (e) {
+                            (_f = this.logger) === null || _f === void 0 ? void 0 : _f.debug('[AnyWeb]', 'need to login', e);
+                            return false;
+                        }
+                    default:
+                        throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.UnsupportedMethod, 'Unsupported Method: ' + method);
+                }
+            }
+            catch (e) {
+                // const codeList = {
+                //   cfx_sendTransaction: ProviderErrorCode.SendTransactionError,
+                //   anyweb_importAccount: ProviderErrorCode.ImportAddressError,
+                // }
+                (_g = this.logger) === null || _g === void 0 ? void 0 : _g.info(`Error when handler request '${method}'!`);
+                throw new common_1.ProviderRpcError(common_1.ProviderErrorCode.RequestError, (0, common_1.isObject)(e) && 'message' in e ? e.message : e, (0, common_1.isObject)(e) && 'data' in e ? e.data : {});
             }
         });
     }

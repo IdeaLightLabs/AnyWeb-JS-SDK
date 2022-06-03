@@ -12,6 +12,7 @@ var AddressType;
 /**
  * Get the type of an address.
  * @param address
+ * @param logger
  */
 const getAddressType = (address, logger = console) => {
     const decodeResult = (0, conflux_address_js_1.decode)(address);

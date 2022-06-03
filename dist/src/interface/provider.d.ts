@@ -69,6 +69,8 @@ export interface IIframeData {
     type: 'event' | 'callback' | 'router' | 'default';
     data: unknown;
     success?: boolean;
+    message?: string;
+    code: number;
 }
 export interface IIframeEventData {
     type: 'changeNetwork' | 'changeChain';

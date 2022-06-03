@@ -98,7 +98,7 @@ const closeIframe = (root, logger) => {
     setBodyScrollable();
     root.style.display = 'none';
 };
-const sendMessageToApp = ({ data, type, success = true, }) => {
+const sendMessageToApp = ({ data, type, success = true, code = 0, }) => {
     const iframe = document.getElementById('anyweb-iframe');
     if (!iframe) {
         return;
@@ -109,6 +109,7 @@ const sendMessageToApp = ({ data, type, success = true, }) => {
                 data,
                 type,
                 success,
+                code,
             },
             type: 'anyweb',
         }, '*');
@@ -220,6 +221,7 @@ const getIframe = (url, onClose, silence = false, logger) => __awaiter(void 0, v
             path: `/${url}`,
             mode: 'redirectTo',
         },
+        code: 0,
     });
     const mask = document.getElementById('anyweb-iframe-mask');
     if (!silence) {
@@ -245,7 +247,11 @@ const callIframe = (path, { appId, params, chainId, scopes = [], authType, waitR
             }, silence);
             const timer = setTimeout(() => {
                 close();
-                reject('Timeout');
+                reject({
+                    code: ProviderErrorCode.SDKTimeOut,
+                    message: 'Timeout',
+                    data: {},
+                });
             }, 10 * 60 * 1000);
             // Set Listeners
             window.addEventListener('message', function receiveMessageFromIframePage(event) {
@@ -264,7 +270,11 @@ const callIframe = (path, { appId, params, chainId, scopes = [], authType, waitR
                             resolve(callback.data);
                         }
                         else {
-                            reject(callback.data);
+                            reject({
+                                code: callback.code,
+                                message: callback.message,
+                                data: callback.data || {},
+                            });
                         }
                     }
                     else if (callback.type === 'event') {
@@ -315,17 +325,19 @@ var ProviderErrorCode;
     ProviderErrorCode[ProviderErrorCode["Disconnected"] = 4900] = "Disconnected";
     ProviderErrorCode[ProviderErrorCode["ChainDisconnected"] = 4901] = "ChainDisconnected";
     ProviderErrorCode[ProviderErrorCode["SDKNotReady"] = 5000] = "SDKNotReady";
+    ProviderErrorCode[ProviderErrorCode["SDKTimeOut"] = 5001] = "SDKTimeOut";
     ProviderErrorCode[ProviderErrorCode["ParamsError"] = 6000] = "ParamsError";
     ProviderErrorCode[ProviderErrorCode["RequestError"] = 7000] = "RequestError";
     ProviderErrorCode[ProviderErrorCode["SendTransactionError"] = 7001] = "SendTransactionError";
     ProviderErrorCode[ProviderErrorCode["ImportAddressError"] = 7002] = "ImportAddressError";
 })(ProviderErrorCode = exports.ProviderErrorCode || (exports.ProviderErrorCode = {}));
 class ProviderRpcError extends Error {
-    constructor(code, message, logger = console) {
-        super('[AnyWeb] ' + message);
-        logger.debug(`[AnyWeb] Throw the error(${code}):` + message);
+    constructor(code, message, data = {}, logger = console) {
+        super(message);
+        logger.error(`[AnyWeb] Throw the error(${code}):`, '\n Message: ', message, '\n Data: ', data);
         this.code = code;
         this.name = ProviderErrorCode[code];
+        this.data = data;
     }
 }
 exports.ProviderRpcError = ProviderRpcError;

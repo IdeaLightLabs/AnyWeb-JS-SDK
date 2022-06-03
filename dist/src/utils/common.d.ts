@@ -13,7 +13,7 @@ export declare const isFullScreen: () => boolean;
  */
 export declare function sha512(str: string): string;
 export declare const isObject: (obj: unknown) => boolean;
-export declare const sendMessageToApp: ({ data, type, success, }: IIframeData) => void;
+export declare const sendMessageToApp: ({ data, type, success, code, }: IIframeData) => void;
 export declare const createIframe: (url: string, logger?: ConsoleLike | undefined) => Promise<void>;
 export declare const getIframe: (url: string, onClose: () => void, silence?: boolean, logger?: ConsoleLike | undefined) => Promise<() => void>;
 export declare const callIframe: (path: string, { appId, params, chainId, scopes, authType, waitResult, silence, }: IIframeOptions, provider: Provider) => Promise<unknown>;
@@ -27,6 +27,7 @@ export declare enum ProviderErrorCode {
     Disconnected = 4900,
     ChainDisconnected = 4901,
     SDKNotReady = 5000,
+    SDKTimeOut = 5001,
     ParamsError = 6000,
     RequestError = 7000,
     SendTransactionError = 7001,
@@ -35,5 +36,5 @@ export declare enum ProviderErrorCode {
 export declare class ProviderRpcError extends Error implements IProviderRpcError {
     code: number;
     data?: unknown;
-    constructor(code: ProviderErrorCode, message: string, logger?: ConsoleLike);
+    constructor(code: ProviderErrorCode, message: string, data?: {}, logger?: ConsoleLike);
 }
