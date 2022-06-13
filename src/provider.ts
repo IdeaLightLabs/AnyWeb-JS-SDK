@@ -248,6 +248,26 @@ export class Provider implements IProvider {
           } else {
             return false
           }
+        case 'cfx_signTypedData':
+          const from = params[0]
+          const data = params[1]
+          const isRsv = !!params[2]
+          return await callIframe(
+            'pages/dapp/auth',
+            {
+              appId: this.appId,
+              chainId: this.chainId,
+              params: params
+                ? JSON.stringify({
+                    from,
+                    data,
+                    isRsv,
+                  })
+                : '',
+              authType: 'signTypedData',
+            },
+            this
+          )
         case 'cfx_sendTransaction':
           let authType: IIframeOptions['authType']
           const payload = params[0]

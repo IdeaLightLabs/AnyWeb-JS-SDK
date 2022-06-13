@@ -83,6 +83,7 @@ export interface IIframeOptions {
     | 'check_identify'
     | 'identify'
     | 'check_login'
+    | 'signTypedData'
   waitResult?: boolean
   silence?: boolean
 }

@@ -516,6 +516,71 @@ const abi = [
   },
 ]
 
+const msgParams = {
+  types: {
+    CIP23Domain: [
+      {
+        name: 'name',
+        type: 'string',
+      },
+      {
+        name: 'version',
+        type: 'string',
+      },
+      {
+        name: 'chainId',
+        type: 'uint256',
+      },
+      {
+        name: 'verifyingContract',
+        type: 'address',
+      },
+    ],
+    Person: [
+      {
+        name: 'name',
+        type: 'string',
+      },
+      {
+        name: 'wallet',
+        type: 'address',
+      },
+    ],
+    Mail: [
+      {
+        name: 'from',
+        type: 'Person',
+      },
+      {
+        name: 'to',
+        type: 'Person',
+      },
+      {
+        name: 'contents',
+        type: 'string',
+      },
+    ],
+  },
+  primaryType: 'Mail',
+  domain: {
+    name: 'Ether Mail',
+    version: '1',
+    chainId: 1,
+    verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+  },
+  message: {
+    from: {
+      name: 'Cow',
+      wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
+    },
+    to: {
+      name: 'Bob',
+      wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+    },
+    contents: 'Hello, Bob!',
+  },
+}
+
 // 初始化钱包
 const provider = new window.AnyWeb.Provider({
   appId: '693b6401-135a-4dc3-846b-1c05ad2572f6',
@@ -586,6 +651,7 @@ async function walletInitialized() {
   const importAddressNameInput = getElement('import_address_name_input')
   const identifyButton = getElement('identify_button')
   const checkLoginButton = getElement('checklogin_button')
+  const signButton = getElement('sign_button')
 
   const deployContract = getElement('deploy_contract')
 
@@ -609,6 +675,7 @@ async function walletInitialized() {
     logoutButton.disabled = false
     importAddressButton.disabled = false
     identifyButton.disabled = false
+    signButton.disabled = false
   }
 
   function unAuthed() {
@@ -626,6 +693,7 @@ async function walletInitialized() {
     logoutButton.disabled = true
     importAddressButton.disabled = true
     identifyButton.disabled = true
+    signButton.disabled = true
   }
 
   try {
@@ -812,6 +880,32 @@ async function walletInitialized() {
             Data: ${e.data}\n 
           `
           console.error('合约调用失败', { message: e.message, data: e.data })
+        })
+    } catch (err) {
+      console.log('err', err)
+    }
+  }
+
+  signButton.onclick = async () => {
+    try {
+      const from = address[0]
+      console.log('connectedAddress', from)
+      provider
+        .request({
+          method: 'cfx_signTypedData',
+          params: [from, JSON.stringify(msgParams)],
+        })
+        .then((result) => {
+          getElement('sign_result').innerHTML = JSON.stringify(result)
+          console.log('result', result)
+        })
+        .catch((e) => {
+          getElement('gateway_test_result').innerHTML = `
+            Code: ${e.code},\n
+            Message: ${e.message},\n
+            Data: ${e.data}\n 
+          `
+          console.error('签名失败', { message: e.message, data: e.data })
         })
     } catch (err) {
       console.log('err', err)

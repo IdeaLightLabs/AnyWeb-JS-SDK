@@ -61,7 +61,7 @@ export interface IIframeOptions {
     params: string;
     chainId: number;
     scopes?: string[];
-    authType?: 'account' | 'createContract' | 'callContract' | 'createTransaction' | 'importAccount' | 'exit_accounts' | 'logout' | 'check_auth' | 'check_identify' | 'identify' | 'check_login';
+    authType?: 'account' | 'createContract' | 'callContract' | 'createTransaction' | 'importAccount' | 'exit_accounts' | 'logout' | 'check_auth' | 'check_identify' | 'identify' | 'check_login' | 'signTypedData';
     waitResult?: boolean;
     silence?: boolean;
 }

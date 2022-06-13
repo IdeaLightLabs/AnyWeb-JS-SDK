@@ -111,6 +111,20 @@
 
     <article>
       <header>
+        获取签名
+      </header>
+      <form>
+        <label>test</label>
+      </form>
+      <button id="sign_button" disabled="true">Gateway Test
+      </button>
+      <footer>
+        Result: <span id="sign_result">N/A</span>
+      </footer>
+    </article>
+
+    <article>
+      <header>
         Approve (cUSDT)
       </header>
       <form>
@@ -192,8 +206,10 @@
   </div>
 
   <script>
-    const now = new Date()
-    document.write(`<script type='text/javascript' src='../../dist/anyweb-js-sdk.umd.min.js?v=${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}'><\/script>`);
+    const now = new Date();
+    document.write(
+      `<script type="text/javascript" src="../../dist/anyweb-js-sdk.umd.min.js?v=${now.getFullYear()}${now.getMonth() +
+      1}${now.getDate()}"><\/script>`);
   </script>
 
   <script type="module">
