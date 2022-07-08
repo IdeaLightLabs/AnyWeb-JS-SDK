@@ -22,11 +22,11 @@ Features:
 
 ## Docs
 
-* [介绍](https://wiki.anyweb.cc/docs/intro)
-* [快速开始](https://wiki.anyweb.cc/docs/quick_start)
-* [API](https://wiki.anyweb.cc/docs/API/modules)
-    * [Provider](https://wiki.anyweb.cc/docs/API/classes/default)
-* [Release notes](https://wiki.anyweb.cc/docs/CHANGELOG)
+* [AnyWeb 介绍](https://wiki.anyweb.cc/docs/AnyWeb/intro)
+* [SDK 介绍](https://wiki.anyweb.cc/docs/SDK/intro)
+* [快速开始](https://wiki.anyweb.cc/docs/SDK/quick_start)
+* [API](https://wiki.anyweb.cc/docs/SDK/usage)
+* [Release notes](https://wiki.anyweb.cc/docs/SDK/CHANGELOG)
 
 前往[ 官网文档 ](https://wiki.anyweb.cc)了解更多
 
@@ -62,7 +62,9 @@ const provider = new Provider({
 从 `anyweb-js-sdk` 的 `dist` 目录中进行引用 `umd` 版本.
 
 ```html
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@idealight-labs/anyweb-js-sdk@latest/dist/anyweb-js-sdk.umd.min.js"></script>
+
+<script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@idealight-labs/anyweb-js-sdk@latest/dist/anyweb-js-sdk.umd.min.js"></script>
 
 <script type="text/javascript">
   const provider = new window.AnyWeb({
