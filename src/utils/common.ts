@@ -12,6 +12,7 @@ import {
 } from '../interface/provider'
 import { Provider } from '../provider'
 import { ConsoleLike } from './types'
+import config from '../../package.json'
 
 export const getFrameWidth = () => {
   if (window.innerHeight < 736) {
@@ -267,9 +268,9 @@ export const callIframe = async (
       const close = await getIframe(
         `${path}?appId=${appId}&authType=${authType}&random=${Math.floor(
           Math.random() * 1000
-        )}&chainId=${chainId}&params=${params}&scopes=${JSON.stringify(
-          scopes
-        )}`,
+        )}&version=${
+          config.apiVersion
+        }&chainId=${chainId}&params=${params}&scopes=${JSON.stringify(scopes)}`,
         () => {
           if (timer) {
             clearTimeout(timer)
@@ -337,7 +338,9 @@ export const callIframe = async (
     })
   } else {
     await getIframe(
-      `${path}?appId=${appId}&authType=${authType}&random=${Math.floor(
+      `${path}?appId=${appId}&authType=${authType}&version=${
+        config.apiVersion
+      }&random=${Math.floor(
         Math.random() * 1000
       )}&chainId=${chainId}&params=${params}&scopes=${JSON.stringify(scopes)}`,
       () => {

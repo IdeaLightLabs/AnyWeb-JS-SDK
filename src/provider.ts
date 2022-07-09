@@ -77,11 +77,11 @@ export class Provider implements IProvider {
         'type' in event.data &&
         event.data.type === 'anyweb'
       ) {
-        const IframeData = event.data.data as IIframeData
+        const iframeData = event.data.data as IIframeData
         if (
-          IframeData.type == 'event' &&
-          IframeData.data == 'ready' &&
-          IframeData.success
+          iframeData.type == 'event' &&
+          iframeData.data == 'ready' &&
+          iframeData.success
         ) {
           this.logger?.debug('[AnyWeb] SDK初始化完成')
           Provider.ready = true

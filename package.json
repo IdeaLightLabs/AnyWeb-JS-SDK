@@ -2,6 +2,7 @@
   "name": "@idealight-labs/anyweb-js-sdk",
   "description": "AnyWeb JavaScript Software Development Kit",
   "version": "1.2.3",
+  "apiVersion": "v1",
   "license": "LGPL-3.0",
   "author": "common@idealight.ltd",
   "repository": {
