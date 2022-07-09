@@ -3,7 +3,6 @@
  * @since 2022/2/11
  */
 import * as forge from 'node-forge'
-import { BASE_URL } from '../config'
 import {
   IIframeData,
   IIframeEventData,
@@ -109,7 +108,11 @@ export const sendMessageToApp = ({
     )
 }
 
-export const createIframe = async (url: string, logger?: ConsoleLike) => {
+export const createIframe = async (
+  url: string,
+  appUrl: string,
+  logger?: ConsoleLike
+) => {
   logger?.debug('[AnyWeb] createIframe', url)
   const mask = document.createElement('div')
   const div = document.createElement('div')
@@ -188,7 +191,7 @@ export const createIframe = async (url: string, logger?: ConsoleLike) => {
   iframe.id = 'anyweb-iframe'
   mask.id = 'anyweb-iframe-mask'
 
-  iframe.setAttribute('src', `${BASE_URL}${url}`)
+  iframe.setAttribute('src', `${appUrl}${url}`)
   iframe.setAttribute('frameborder', '0')
   iframe.setAttribute('scrolling', 'no')
 
@@ -214,6 +217,7 @@ export const createIframe = async (url: string, logger?: ConsoleLike) => {
 
 export const getIframe = async (
   url: string,
+  appUrl: string,
   onClose: () => void,
   silence = false,
   logger?: ConsoleLike
@@ -225,7 +229,7 @@ export const getIframe = async (
     )
   ) {
     logger?.warn('[AnyWeb] Something wrong with the iframe, recreating...')
-    await createIframe(url)
+    await createIframe(url, appUrl)
   }
   sendMessageToApp({
     type: 'router',
@@ -270,6 +274,7 @@ export const callIframe = async (
         )}&chainId=${chainId}&params=${params}&scopes=${JSON.stringify(
           scopes
         )}`,
+        provider.appUrl!,
         () => {
           if (timer) {
             clearTimeout(timer)
@@ -340,6 +345,7 @@ export const callIframe = async (
       `${path}?appId=${appId}&authType=${authType}&random=${Math.floor(
         Math.random() * 1000
       )}&chainId=${chainId}&params=${params}&scopes=${JSON.stringify(scopes)}`,
+      provider.appUrl!,
       () => {
         return
       },

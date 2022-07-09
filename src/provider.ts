@@ -39,6 +39,7 @@ export class Provider implements IProvider {
   private chainId = 1
   private static instance: Provider
   public static ready = false
+  appUrl
 
   events: {
     onConnect?: (connectInfo: IProviderConnectInfo) => void
@@ -50,7 +51,10 @@ export class Provider implements IProvider {
     onReady?: () => void
   } = {}
 
-  constructor({ logger = console, appId }: IBaseProviderOptions) {
+  constructor(
+    { logger = console, appId }: IBaseProviderOptions,
+    appUrl = 'https://app.anyweb.cc/#/'
+  ) {
     if (Provider.instance) {
       return Provider.instance
     }
@@ -58,6 +62,8 @@ export class Provider implements IProvider {
 
     this.logger = logger
     this.appId = appId
+    this.appUrl = appUrl
+
     // bind functions (to prevent consumers from making unbound calls)
     this.request = this.request.bind(this)
     this.call = this.call.bind(this)
@@ -92,7 +98,7 @@ export class Provider implements IProvider {
     }
     window.addEventListener('message', messageHandler)
 
-    createIframe('pages/index/home', this.logger)
+    createIframe('pages/index/home', this.appUrl, this.logger)
       .then()
       .catch((e) => this.logger?.error('[AnyWeb] createIframe error', e))
   }
