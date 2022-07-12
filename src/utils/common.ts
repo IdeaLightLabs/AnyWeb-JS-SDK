@@ -120,7 +120,10 @@ export const createIframe = async (
   const button = document.createElement('div')
   const style = document.createElement('style')
   style.innerHTML = `  
-.iframe-mask {
+  .iframe::-webkit-scrollbar{
+    display: none;
+  }
+  .iframe-mask {
     position: fixed;
     top: 0;
     left: 0;
