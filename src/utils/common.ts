@@ -194,6 +194,10 @@ export const createIframe = async (
   iframe.id = 'anyweb-iframe'
   mask.id = 'anyweb-iframe-mask'
 
+  document.body.appendChild(style)
+  document.body.insertBefore(mask, document.body.firstElementChild)
+
+  iframe.setAttribute('style', 'height: 100%; width: 100%;')
   iframe.setAttribute('src', `${appUrl}${url}`)
   iframe.setAttribute('frameborder', '0')
   iframe.setAttribute('scrolling', 'no')
@@ -213,9 +217,6 @@ export const createIframe = async (
       'User canceled the operation'
     )
   }
-  document.body.appendChild(style)
-
-  document.body.insertBefore(mask, document.body.firstElementChild)
 }
 
 export const getIframe = async (
