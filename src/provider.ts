@@ -289,7 +289,9 @@ export class Provider implements IProvider {
               params: params
                 ? JSON.stringify({
                     payload: params[0],
-                    gatewayPayload: params[1],
+                    tradeNo: params[1] || '',
+                    gatewayPayload: params[2],
+                    functionName: params[3],
                   })
                 : '',
               authType: authType,
