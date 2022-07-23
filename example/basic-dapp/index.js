@@ -584,10 +584,27 @@ const msgParams = {
 // 初始化钱包
 const provider = new window.AnyWeb.Provider({
   appId: '693b6401-135a-4dc3-846b-1c05ad2572f6',
-}) //
+})
 console.log('开始监听是否准备好')
 provider.on('ready', async () => {
-  walletInitialized()
+  await walletInitialized()
+  window.addEventListener('load', async () => {
+    if (!isAnyWebInstall()) {
+      return
+    }
+    getElement('installed').innerHTML = 'installed'
+    if (window.localStorage.getItem('__FLUENT_USE_MODERN_PROVIDER_API__')) {
+      getElement('installed-section').style.display = 'block'
+    }
+    if (isAnyWebInstall()) {
+      console.log('DApp 已经检查到OK了')
+      provider.request({ method: 'anyweb_version' }).then((version) => {
+        getElement('version').innerHTML = version
+      })
+    } else {
+      alert('找不到AnyWeb SDK, 请检查是否正确配置')
+    }
+  })
 })
 
 function getElement(id) {
@@ -636,7 +653,6 @@ async function walletInitialized() {
   const connectButton = getElement('connect')
   const DeauthorizeButton = getElement('Deauthorize')
   const logoutButton = getElement('Logout')
-  const sendNativeTokenButton = getElement('send_native_token')
   const approveButton = getElement('approve')
   const transferFromButton = getElement('transfer_from')
   const getCFXButton = getElement('get-cfx')
@@ -664,7 +680,6 @@ async function walletInitialized() {
       getElement('oauth_code').innerHTML = oauthCode
     }
     console.log('authed address: ', address)
-    sendNativeTokenButton.disabled = false
     approveButton.disabled = false
     transferFromButton.disabled = false
     deployContract.disabled = false
@@ -682,7 +697,6 @@ async function walletInitialized() {
     getElement('address').innerHTML = 'N/A'
     getElement('oauth_code').innerHTML = 'N/A'
     console.log('unauthed')
-    sendNativeTokenButton.disabled = true
     approveButton.disabled = true
     transferFromButton.disabled = true
     getCFXButton.disabled = true
@@ -801,29 +815,6 @@ async function walletInitialized() {
       .catch(console.error)
   }
 
-  // send native token to the connected address
-  sendNativeTokenButton.onclick = async () => {
-    const connectedAddress = address[0]
-    const payload = {
-      from: connectedAddress,
-      value: Drip.fromCFX(countInput.value),
-      to: nativeReceiverAddressInput.value,
-    }
-
-    const gatewayPayload = {
-      test: 'test',
-    }
-
-    provider
-      .request({
-        method: 'cfx_sendTransaction',
-        params: [payload, gatewayPayload],
-      })
-      .then((result) => {
-        getElement('send_native_token_result').innerHTML = `txhash: ${result}`
-      })
-      .catch((error) => console.error('error', error.message || error))
-  }
   getCFXButton.onclick = async () => {
     try {
       const connectedAddress = address[0]
@@ -969,8 +960,7 @@ async function walletInitialized() {
       provider
         .request({ method: 'cfx_sendTransaction', params: [tx] })
         .then((result) => {
-          getElement('deploy_contract_result').innerHTML =
-            result.transactionHash
+          getElement('deploy_contract_result').innerHTML = result
           console.log('result', result)
         })
     } catch (err) {
@@ -1036,23 +1026,3 @@ async function walletInitialized() {
     }
   }
 }
-
-window.addEventListener('load', async () => {
-  if (!isAnyWebInstall()) {
-    return
-  }
-
-  getElement('installed').innerHTML = 'installed'
-  if (window.localStorage.getItem('__FLUENT_USE_MODERN_PROVIDER_API__')) {
-    getElement('installed-section').style.display = 'block'
-  }
-
-  if (isAnyWebInstall()) {
-    console.log('DApp 已经检查到OK了')
-    provider.request({ method: 'anyweb_version' }).then((version) => {
-      getElement('version').innerHTML = version
-    })
-  } else {
-    alert('找不到AnyWeb SDK, 请检查是否正确配置')
-  }
-})
