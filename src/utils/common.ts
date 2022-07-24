@@ -7,10 +7,12 @@ import {
   IIframeData,
   IIframeEventData,
   IIframeOptions,
+  IMethodType,
   IProviderRpcError,
 } from '../interface/provider'
 import { Provider } from '../provider'
 import { ConsoleLike } from './types'
+import config from '../../package.json'
 
 export const getFrameWidth = () => {
   if (window.innerHeight < 736) {
@@ -134,11 +136,15 @@ export const createIframe = async (
   }
   .iframe-contain {
     position: fixed;
-    background: #FFFFFF;
-    border: 1px solid #EAEAEA;
     z-index: 999999999;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-    border-radius: ${isFullScreen() ? '0' : '15px'};
+    ${
+      isFullScreen()
+        ? `
+   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+   border-radius: 15px;`
+        : ''
+    }
+    
     width: ${isFullScreen() ? '100%' : `${getFrameWidth()}px`};
     height: ${isFullScreen() ? '100%' : `${getFrameHeight()}px`};
     transform: translate(-50%, -50%);
@@ -220,8 +226,9 @@ export const createIframe = async (
 }
 
 export const getIframe = async (
-  url: string,
+  method: IMethodType,
   appUrl: string,
+  pararms: Record<any, any>,
   onClose: () => void,
   silence = false,
   logger?: ConsoleLike
@@ -233,13 +240,13 @@ export const getIframe = async (
     )
   ) {
     logger?.warn('[AnyWeb] Something wrong with the iframe, recreating...')
-    await createIframe(url, appUrl)
+    await createIframe('', appUrl)
   }
   sendMessageToApp({
-    type: 'router',
+    type: 'event',
     data: {
-      path: `/${url}`,
-      mode: 'redirectTo',
+      params: { ...pararms, version: config.version },
+      method: method,
     },
     code: 0,
   })
@@ -257,13 +264,12 @@ export const getIframe = async (
 }
 
 export const callIframe = async (
-  path: string,
+  method: IMethodType,
   {
     appId,
     params,
     chainId,
     scopes = [],
-    authType,
     waitResult = true,
     silence = false,
   }: IIframeOptions,
@@ -273,12 +279,16 @@ export const callIframe = async (
     return new Promise<unknown>(async (resolve, reject) => {
       let callback: IIframeData | undefined = undefined
       const close = await getIframe(
-        `${path}?appId=${appId}&authType=${authType}&random=${Math.floor(
-          Math.random() * 1000
-        )}&chainId=${chainId}&params=${params}&scopes=${JSON.stringify(
-          scopes
-        )}`,
+        method,
         provider.appUrl!,
+        {
+          appId,
+          authType: method,
+          random: Math.floor(Math.random() * 1000),
+          chainId,
+          params,
+          scopes,
+        },
         () => {
           if (timer) {
             clearTimeout(timer)
@@ -346,10 +356,16 @@ export const callIframe = async (
     })
   } else {
     await getIframe(
-      `${path}?appId=${appId}&authType=${authType}&random=${Math.floor(
-        Math.random() * 1000
-      )}&chainId=${chainId}&params=${params}&scopes=${JSON.stringify(scopes)}`,
+      method,
       provider.appUrl!,
+      {
+        appId,
+        authType: method,
+        random: Math.floor(Math.random() * 1000),
+        chainId,
+        params,
+        scopes,
+      },
       () => {
         return
       },

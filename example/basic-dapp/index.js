@@ -1,9 +1,8 @@
 // import js-conflux-sdk
 // more info about js-conflux-sdk
 // https://github.com/Conflux-Chain/js-conflux-sdk#readme
-import { Conflux, Drip } from './js-conflux-sdk.js'
+import { Conflux } from './js-conflux-sdk.js'
 
-const cusdtAddress = 'cfxtest:acepe88unk7fvs18436178up33hb4zkuf62a9dk1gv'
 const dappAddress = 'cfxtest:aca8paka2w86tpgmmh7ufdv005u2cheb76578khwd2'
 const onlineAddress = 'cfx:acgtf56ceymsvw2r0nsffveafatu5v6jz6me8m4m85'
 
@@ -653,16 +652,9 @@ async function walletInitialized() {
   const connectButton = getElement('connect')
   const DeauthorizeButton = getElement('Deauthorize')
   const logoutButton = getElement('Logout')
-  const approveButton = getElement('approve')
-  const transferFromButton = getElement('transfer_from')
   const getCFXButton = getElement('get-cfx')
   const gatewayTestButton = getElement('gateway_test')
   const importAddressButton = getElement('import_address_button')
-  const nativeReceiverAddressInput = getElement('native-receiver')
-  const countInput = getElement('native-count')
-  const approveAccountInput = getElement('approve-account')
-  const transferFromAccountInput = getElement('from-account')
-  const transferToAccountInput = getElement('to-account')
   const importAddressInput = getElement('import_address_input')
   const importAddressNameInput = getElement('import_address_name_input')
   const identifyButton = getElement('identify_button')
@@ -680,8 +672,6 @@ async function walletInitialized() {
       getElement('oauth_code').innerHTML = oauthCode
     }
     console.log('authed address: ', address)
-    approveButton.disabled = false
-    transferFromButton.disabled = false
     deployContract.disabled = false
     getCFXButton.disabled = false
     gatewayTestButton.disabled = false
@@ -697,8 +687,6 @@ async function walletInitialized() {
     getElement('address').innerHTML = 'N/A'
     getElement('oauth_code').innerHTML = 'N/A'
     console.log('unauthed')
-    approveButton.disabled = true
-    transferFromButton.disabled = true
     getCFXButton.disabled = true
     gatewayTestButton.disabled = true
     deployContract.disabled = true
@@ -831,6 +819,11 @@ async function walletInitialized() {
           console.log('result', result)
         })
         .catch((e) => {
+          getElement('get_cfx_result').innerHTML = `
+            Code: ${e.code},\n
+            Message: ${e.message},\n
+            Data: ${JSON.stringify(e.data)}\n 
+          `
           console.error('获取CFX失败', e)
         })
     } catch (err) {
@@ -897,52 +890,6 @@ async function walletInitialized() {
             Data: ${e.data}\n 
           `
           console.error('签名失败', { message: e.message, data: e.data })
-        })
-    } catch (err) {
-      console.log('err', err)
-    }
-  }
-
-  // approve spender
-  approveButton.onclick = async () => {
-    try {
-      const connectedAddress = address[0]
-      const tx = {
-        from: connectedAddress,
-        to: cusdtAddress,
-        data: exampleContract.approve(
-          approveAccountInput.value,
-          100000000000000000000
-        ).data,
-        gasPrice: 2,
-      }
-      provider
-        .request({ method: 'cfx_sendTransaction', params: [tx] })
-        .then((result) => {
-          getElement('approve_result').innerHTML = result
-          console.log('result', result)
-        })
-    } catch (err) {
-      console.log('err', err)
-    }
-  }
-  // transfer from
-  transferFromButton.onclick = async () => {
-    try {
-      const connectedAddress = address[0]
-      const tx = {
-        from: connectedAddress,
-        to: cusdtAddress,
-        data: exampleContract.transferFrom(
-          transferFromAccountInput.value,
-          transferToAccountInput.value,
-          10000000000000000000
-        ).data,
-      }
-      provider
-        .request({ method: 'cfx_sendTransaction', params: [tx] })
-        .then((result) => {
-          console.log('result', result)
         })
     } catch (err) {
       console.log('err', err)

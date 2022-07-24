@@ -66,24 +66,27 @@ export interface IProviderMessage {
   readonly data: unknown
 }
 
+export type IMethodType =
+  | 'account'
+  | 'createContract'
+  | 'callContract'
+  | 'createTransaction'
+  | 'importAccount'
+  | 'exitAccounts'
+  | 'signTypedData'
+  | 'logout'
+  | 'checkAuth'
+  | 'checkLogin'
+  | 'home'
+  | 'unknownType'
+  | 'identify'
+  | 'checkIdentify'
+
 export interface IIframeOptions {
   appId: string
   params: string
   chainId: number
   scopes?: string[]
-  authType?:
-    | 'account'
-    | 'createContract'
-    | 'callContract'
-    | 'createTransaction'
-    | 'importAccount'
-    | 'exit_accounts'
-    | 'logout'
-    | 'check_auth'
-    | 'check_identify'
-    | 'identify'
-    | 'check_login'
-    | 'signTypedData'
   waitResult?: boolean
   silence?: boolean
 }

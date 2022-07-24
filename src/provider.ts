@@ -5,9 +5,9 @@
 
 import {
   IAuthResult,
+  IMethodType,
   IBaseProviderOptions,
   IIframeData,
-  IIframeOptions,
   IProvider,
   IProviderConnectInfo,
   IProviderMessage,
@@ -209,12 +209,11 @@ export class Provider implements IProvider {
           let result: IAuthResult
           try {
             result = (await callIframe(
-              'pages/dapp/auth',
+              'checkAuth',
               {
                 appId: this.appId,
-                params: params ? JSON.stringify(params[0]) : '',
+                params: params ? params[0] : {},
                 chainId: this.chainId,
-                authType: 'check_auth',
                 scopes: scopes,
                 silence: true,
               },
@@ -224,12 +223,11 @@ export class Provider implements IProvider {
           } catch (e) {
             this.logger?.debug('[AnyWeb]', 'need to auth', e)
             result = (await callIframe(
-              'pages/dapp/auth',
+              'account',
               {
                 appId: this.appId,
-                params: params ? JSON.stringify(params[0]) : '',
+                params: params ? params[0] : {},
                 chainId: this.chainId,
-                authType: 'account',
                 scopes: scopes,
               },
               this
@@ -259,7 +257,7 @@ export class Provider implements IProvider {
           const data = params[1]
           const isRsv = !!params[2]
           return await callIframe(
-            'pages/dapp/auth',
+            'signTypedData',
             {
               appId: this.appId,
               chainId: this.chainId,
@@ -270,12 +268,11 @@ export class Provider implements IProvider {
                     isRsv,
                   })
                 : '',
-              authType: 'signTypedData',
             },
             this
           )
         case 'cfx_sendTransaction':
-          let authType: IIframeOptions['authType']
+          let authType: IMethodType
           const payload = params[0]
           const to = payload.to
           if (to) {
@@ -288,7 +285,7 @@ export class Provider implements IProvider {
           }
 
           return await callIframe(
-            'pages/dapp/auth',
+            authType,
             {
               appId: this.appId,
               chainId: this.chainId,
@@ -298,18 +295,16 @@ export class Provider implements IProvider {
                     gatewayPayload: params[1],
                   })
                 : '',
-              authType: authType,
             },
             this
           )
         case 'anyweb_importAccount':
           return await callIframe(
-            'pages/dapp/auth',
+            'importAccount',
             {
               appId: this.appId,
               chainId: this.chainId,
-              params: params ? JSON.stringify(params[0]) : JSON.stringify({}),
-              authType: 'importAccount',
+              params: params ? params[0] : {},
             },
             this
           )
@@ -317,7 +312,7 @@ export class Provider implements IProvider {
           return config.version
         case 'anyweb_home':
           return await callIframe(
-            'pages/index/home',
+            'home',
             {
               appId: this.appId,
               chainId: this.chainId,
@@ -330,12 +325,11 @@ export class Provider implements IProvider {
           return this.rawRequest('anyweb_revoke', params)
         case 'anyweb_revoke':
           return await callIframe(
-            'pages/dapp/auth',
+            'exitAccounts',
             {
               appId: this.appId,
               chainId: this.chainId,
               params: params ? JSON.stringify(params) : '',
-              authType: 'exit_accounts',
               silence: true,
             },
             this
@@ -344,12 +338,11 @@ export class Provider implements IProvider {
           let identifyResult
           try {
             identifyResult = await callIframe(
-              'pages/user/identify',
+              'checkIdentify',
               {
                 appId: this.appId,
                 chainId: this.chainId,
                 params: params ? JSON.stringify(params) : '',
-                authType: 'check_identify',
                 silence: true,
               },
               this
@@ -362,12 +355,11 @@ export class Provider implements IProvider {
           } catch (e) {
             this.logger?.debug('[AnyWeb]', 'need to identify', e)
             identifyResult = await callIframe(
-              'pages/user/identify',
+              'identify',
               {
                 appId: this.appId,
                 chainId: this.chainId,
                 params: params ? JSON.stringify(params) : '',
-                authType: 'identify',
               },
               this
             )
@@ -376,12 +368,11 @@ export class Provider implements IProvider {
         case 'anyweb_logout':
           // Logout the account of AnyWeb
           return await callIframe(
-            'pages/dapp/auth',
+            'logout',
             {
               appId: this.appId,
               chainId: this.chainId,
               params: params ? JSON.stringify(params) : '',
-              authType: 'logout',
               silence: true,
             },
             this
@@ -389,12 +380,11 @@ export class Provider implements IProvider {
         case 'anyweb_loginstate':
           try {
             return await callIframe(
-              'pages/dapp/auth',
+              'checkLogin',
               {
                 appId: this.appId,
                 params: '',
                 chainId: this.chainId,
-                authType: 'check_login',
                 silence: true,
               },
               this
