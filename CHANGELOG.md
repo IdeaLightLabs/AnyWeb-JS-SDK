@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.4](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.2.3...v1.2.4) (2022-07-24)
+
+
+### Features
+
+* **add sign function:** add sign function ([f11f05d](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/f11f05dc2ea4479121f0ff83acdf2c708ef83c10))
+* **add some feat:** improve SDK ([41f2fd5](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/41f2fd51391d2269dff6fec46182319e246d6fe6))
+* **app url:** support set app url ([74a42b8](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/74a42b878cca5079e477cffa5b92974790fad37f))
+
+
+### Bug Fixes
+
+* **fix iframe size:** fix iframe size ([47c76a5](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/47c76a5be6bfd54620676d5088c2eb21b122c470))
+* **hide scrollbar:** hide scrollbar in Safari ([17f0b98](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/17f0b98712589fe8a2d449ee44328b8b603ced40))
+
 ### [1.2.3](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.2.2...v1.2.3) (2022-06-13)
 
 ### [1.2.2](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.2.1...v1.2.2) (2022-06-03)
