@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.2.4...v1.3.0) (2022-07-24)
+
+
+### Bug Fixes
+
+* **iframe size:** fix iframe size error ([eb8f418](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/eb8f4185e41d3113279f2684f0b8f0a2f0912cf5))
+
 ### [1.2.4](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.2.3...v1.2.4) (2022-07-24)
 
 
