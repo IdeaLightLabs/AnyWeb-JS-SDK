@@ -81,7 +81,7 @@ export const isObject = (obj: unknown) => {
 const closeIframe = (root: HTMLDivElement, logger?: ConsoleLike) => {
   logger?.debug('[AnyWeb]', 'closeIframe', root.style)
   setBodyScrollable()
-  root.style.display = 'none'
+  root.style.visibility = 'hidden'
 }
 export const sendMessageToApp = ({
   data,
@@ -123,7 +123,7 @@ export const createIframe = async (
   const style = document.createElement('style')
   style.innerHTML = `  
   .iframe::-webkit-scrollbar{
-    display: none;
+    visibility: hidden;
   }
   .iframe-mask {
     position: fixed;
@@ -212,7 +212,7 @@ export const createIframe = async (
   !isFullScreen() && mask.insertBefore(button, mask.firstElementChild)
   mask.insertBefore(div, mask.firstElementChild)
   // Hide before call the method
-  mask.style.display = 'none'
+  mask.style.visibility = 'hidden'
   // setBodyScrollable()
 
   button.onclick = () => {
@@ -252,8 +252,10 @@ export const getIframe = async (
   })
   const mask = document.getElementById('anyweb-iframe-mask') as HTMLDivElement
   if (!silence) {
-    mask.style.display = 'block'
-    setBodyNonScrollable()
+    setTimeout(() => {
+      mask.style.visibility = 'visible'
+      setBodyNonScrollable()
+    }, 300)
   }
   return () => {
     onClose()
