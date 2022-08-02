@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.3.0...v1.3.1) (2022-08-02)
+
+
+### Bug Fixes
+
+* **close button error:** fix the error of close button ([e5a6484](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/e5a6484b6a224e07cb84e0d5dfe4ea4b134862f0))
+
 ## [1.3.0](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.2.4...v1.3.0) (2022-07-24)
 
 
