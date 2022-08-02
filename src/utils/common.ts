@@ -102,15 +102,6 @@ export const sendMessage = (
   localWindow: any,
   { data, type, success = true, code = 0, message }: IIframeData
 ) => {
-  console.log(
-    '[AnyWeb] sendMessage',
-    data,
-    type,
-    success,
-    code,
-    message,
-    localWindow
-  )
   return (
     localWindow &&
     localWindow.postMessage(
