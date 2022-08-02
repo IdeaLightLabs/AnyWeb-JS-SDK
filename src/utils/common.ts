@@ -95,19 +95,38 @@ export const sendMessageToApp = ({
   if (!iframe) {
     return
   }
-  iframe.contentWindow &&
-    iframe.contentWindow.postMessage(
+  sendMessage(iframe.contentWindow, { data, type, success, code })
+}
+
+export const sendMessage = (
+  localWindow: any,
+  { data, type, success = true, code = 0, message }: IIframeData
+) => {
+  console.log(
+    '[AnyWeb] sendMessage',
+    data,
+    type,
+    success,
+    code,
+    message,
+    localWindow
+  )
+  return (
+    localWindow &&
+    localWindow.postMessage(
       {
         data: {
           data,
           type,
           success,
           code,
+          message,
         },
         type: 'anyweb',
       },
       '*'
     )
+  )
 }
 
 export const createIframe = async (
@@ -216,19 +235,21 @@ export const createIframe = async (
   // setBodyScrollable()
 
   button.onclick = () => {
-    closeIframe(mask)
-
-    throw new ProviderRpcError(
-      ProviderErrorCode.Unauthorized,
-      'User canceled the operation'
-    )
+    window &&
+      sendMessage(window, {
+        data: {},
+        type: 'callback',
+        message: 'User canceled the operation',
+        code: ProviderErrorCode.Unauthorized,
+        success: false,
+      })
   }
 }
 
 export const getIframe = async (
   method: IMethodType,
   appUrl: string,
-  pararms: Record<any, any>,
+  params: Record<any, any>,
   onClose: () => void,
   silence = false,
   logger?: ConsoleLike
@@ -245,7 +266,7 @@ export const getIframe = async (
   sendMessageToApp({
     type: 'event',
     data: {
-      params: { ...pararms, version: config.version },
+      params: { ...params, version: config.version },
       method: method,
     },
     code: 0,

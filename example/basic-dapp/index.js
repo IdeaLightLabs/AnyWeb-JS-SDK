@@ -656,6 +656,7 @@ async function walletInitialized() {
   const gatewayTestButton = getElement('gateway_test')
   const importAddressButton = getElement('import_address_button')
   const importAddressInput = getElement('import_address_input')
+  const phoneInput = getElement('phone_input')
   const importAddressNameInput = getElement('import_address_name_input')
   const identifyButton = getElement('identify_button')
   const checkLoginButton = getElement('checklogin_button')
@@ -759,6 +760,7 @@ async function walletInitialized() {
         {
           availableNetwork: [1, 1029],
           scopes: ['baseInfo', 'identity'],
+          phone: phoneInput.value,
         },
       ],
     })
