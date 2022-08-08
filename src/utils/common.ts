@@ -226,6 +226,7 @@ export const createIframe = async (
   // setBodyScrollable()
 
   button.onclick = () => {
+    closeIframe(mask)
     window &&
       sendMessage(window, {
         data: {},
