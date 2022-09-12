@@ -16,6 +16,7 @@ export interface IRequestArguments {
 export interface IBaseProviderOptions {
   logger?: ConsoleLike
   appId: string
+  global?: boolean
 }
 
 /**

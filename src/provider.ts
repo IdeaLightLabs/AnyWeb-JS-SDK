@@ -5,9 +5,9 @@
 
 import {
   IAuthResult,
-  IMethodType,
   IBaseProviderOptions,
   IIframeData,
+  IMethodType,
   IProvider,
   IProviderConnectInfo,
   IProviderMessage,
@@ -52,9 +52,12 @@ export class Provider implements IProvider {
   } = {}
 
   constructor(
-    { logger = console, appId }: IBaseProviderOptions,
+    { logger = console, appId, global = false }: IBaseProviderOptions,
     appUrl = 'https://app.anyweb.cc/#/'
   ) {
+    if (global) {
+      appUrl = 'https://global.app.anyweb.cc/#/'
+    }
     if (Provider.instance) {
       return Provider.instance
     }
