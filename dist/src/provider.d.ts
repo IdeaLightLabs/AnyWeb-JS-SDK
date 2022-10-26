@@ -13,7 +13,7 @@ import { ConsoleLike } from './utils/types';
  * const provider = new Provider()
  */
 export declare class Provider implements IProvider {
-    logger?: ConsoleLike;
+    logger: ConsoleLike | null;
     readonly appId: string;
     private chainId;
     private static instance;

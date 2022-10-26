@@ -123,7 +123,7 @@ export const sendMessage = (
 export const createIframe = async (
   url: string,
   appUrl: string,
-  logger?: ConsoleLike
+  logger?: ConsoleLike | null
 ) => {
   logger?.debug('[AnyWeb] createIframe', url)
   const mask = document.createElement('div')

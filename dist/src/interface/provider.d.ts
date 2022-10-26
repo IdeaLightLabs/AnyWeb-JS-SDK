@@ -12,7 +12,7 @@ export interface IRequestArguments {
     readonly chainId?: number;
 }
 export interface IBaseProviderOptions {
-    logger?: ConsoleLike;
+    logger?: ConsoleLike | null;
     appId: string;
     global?: boolean;
 }

@@ -16,7 +16,7 @@ var AddressType;
  */
 const getAddressType = (address, logger = console) => {
     const decodeResult = (0, conflux_address_js_1.decode)(address);
-    logger.debug('[AnyWeb] decodeResult', decodeResult);
+    logger === null || logger === void 0 ? void 0 : logger.debug('[AnyWeb] decodeResult', decodeResult);
     if (Object.keys(decodeResult).includes('type')) {
         return decodeResult.type;
     }

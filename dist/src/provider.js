@@ -30,6 +30,7 @@ const address_1 = require("./utils/address");
  */
 class Provider {
     constructor({ logger = console, appId, global = false }, appUrl = 'https://app.anyweb.cc/#/') {
+        this.logger = console;
         this.chainId = 1;
         this.events = {};
         if (global) {

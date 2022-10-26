@@ -10,4 +10,4 @@ export declare enum AddressType {
  * @param address
  * @param logger
  */
-export declare const getAddressType: (address: string, logger?: ConsoleLike) => AddressType;
+export declare const getAddressType: (address: string, logger?: ConsoleLike | null) => AddressType;

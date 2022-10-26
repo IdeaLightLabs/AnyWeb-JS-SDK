@@ -15,7 +15,7 @@ export declare function sha512(str: string): string;
 export declare const isObject: (obj: unknown) => boolean;
 export declare const sendMessageToApp: ({ data, type, success, code, }: IIframeData) => void;
 export declare const sendMessage: (localWindow: any, { data, type, success, code, message }: IIframeData) => any;
-export declare const createIframe: (url: string, appUrl: string, logger?: ConsoleLike | undefined) => Promise<void>;
+export declare const createIframe: (url: string, appUrl: string, logger?: ConsoleLike | null | undefined) => Promise<void>;
 export declare const getIframe: (method: IMethodType, appUrl: string, params: Record<any, any>, onClose: () => void, silence?: boolean, logger?: ConsoleLike | undefined) => Promise<() => void>;
 export declare const callIframe: (method: IMethodType, { appId, params, chainId, scopes, waitResult, silence, }: IIframeOptions, provider: Provider) => Promise<unknown>;
 export declare const writeStorage: (key: string, content: Record<string, unknown>, expiresTime?: number) => void;

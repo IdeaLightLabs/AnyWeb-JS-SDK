@@ -15,10 +15,10 @@ export enum AddressType {
  */
 export const getAddressType = (
   address: string,
-  logger: ConsoleLike = console
+  logger: ConsoleLike | null = console
 ): AddressType => {
   const decodeResult = decode(address)
-  logger.debug('[AnyWeb] decodeResult', decodeResult)
+  logger?.debug('[AnyWeb] decodeResult', decodeResult)
   if (Object.keys(decodeResult).includes('type')) {
     return decodeResult.type as AddressType
   } else {

@@ -34,7 +34,7 @@ import { ConsoleLike } from './utils/types'
  * const provider = new Provider()
  */
 export class Provider implements IProvider {
-  logger?: ConsoleLike
+  logger: ConsoleLike | null = console
   public readonly appId!: string
   private chainId = 1
   private static instance: Provider
