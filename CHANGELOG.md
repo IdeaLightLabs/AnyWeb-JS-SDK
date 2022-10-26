@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.4](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.3.1...v1.3.4) (2022-10-26)
+
+
+### Features
+
+* **add global:** add global ([1223fa0](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/1223fa08d95977805775b3c7ee7e1630f50c1b1e))
+
+
+### Bug Fixes
+
+* **Fix bug:** fix bug that iframe cannot be closed ([adbd9c1](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/adbd9c1fcf47266f4798be646f4450d479561a5a))
+* **logger:** support set logger to null ([9458f2c](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/9458f2ca57e5c2482b6bc23fe8a54421f88f4980))
+
 ### [1.3.3](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.3.2...v1.3.3) (2022-09-12)
 
 
