@@ -915,7 +915,7 @@ async function walletInitialized() {
       provider
         .request({
           method: 'cfx_personalSign',
-          params: [from, JSON.stringify(msgParams)],
+          params: [from, '0x123'],
         })
         .then((result) => {
           getElement('personal_sign_result').innerHTML = JSON.stringify(result)
