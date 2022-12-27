@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.5](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.3.4...v1.3.5) (2022-12-27)
+
 ### [1.3.4](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.3.1...v1.3.4) (2022-10-26)
 
 
