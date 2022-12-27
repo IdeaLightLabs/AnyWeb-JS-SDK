@@ -914,7 +914,7 @@ async function walletInitialized() {
       console.log('connectedAddress', from)
       provider
         .request({
-          method: 'cfx_personal_sign',
+          method: 'cfx_personalSign',
           params: [from, JSON.stringify(msgParams)],
         })
         .then((result) => {

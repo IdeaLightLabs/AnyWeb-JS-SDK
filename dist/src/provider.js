@@ -211,7 +211,6 @@ class Provider {
                     case 'cfx_signTypedData':
                         const from = params[0];
                         const data = params[1];
-                        const isRsv = !!params[2];
                         return yield (0, common_1.callIframe)('signTypedData', {
                             appId: this.appId,
                             chainId: this.chainId,
@@ -219,7 +218,17 @@ class Provider {
                                 ? JSON.stringify({
                                     from,
                                     data,
-                                    isRsv,
+                                })
+                                : '',
+                        }, this);
+                    case 'cfx_personal_sign':
+                        return yield (0, common_1.callIframe)('personalSign', {
+                            appId: this.appId,
+                            chainId: this.chainId,
+                            params: params
+                                ? JSON.stringify({
+                                    from: params[0],
+                                    message: params[1],
                                 })
                                 : '',
                         }, this);

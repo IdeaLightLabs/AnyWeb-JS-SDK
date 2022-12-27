@@ -57,7 +57,7 @@ export interface IProviderMessage {
     readonly type: string;
     readonly data: unknown;
 }
-export declare type IMethodType = 'account' | 'createContract' | 'callContract' | 'createTransaction' | 'importAccount' | 'exitAccounts' | 'signTypedData' | 'logout' | 'checkAuth' | 'checkLogin' | 'home' | 'unknownType' | 'identify' | 'checkIdentify';
+export declare type IMethodType = 'account' | 'createContract' | 'callContract' | 'createTransaction' | 'importAccount' | 'exitAccounts' | 'signTypedData' | 'logout' | 'checkAuth' | 'checkLogin' | 'home' | 'unknownType' | 'identify' | 'checkIdentify' | 'personalSign';
 export interface IIframeOptions {
     appId: string;
     params: string;

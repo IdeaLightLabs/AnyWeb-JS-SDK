@@ -272,7 +272,7 @@ export class Provider implements IProvider {
             },
             this
           )
-        case 'cfx_personal_sign':
+        case 'cfx_personalSign':
           return await callIframe(
             'personalSign',
             {
