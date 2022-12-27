@@ -581,9 +581,16 @@ const msgParams = {
 }
 
 // 初始化钱包
-const provider = new window.AnyWeb.Provider({
-  appId: '693b6401-135a-4dc3-846b-1c05ad2572f6',
-})
+// const provider = new window.AnyWeb.Provider({
+//   appId: '693b6401-135a-4dc3-846b-1c05ad2572f6',
+// })
+// 初始化钱包
+const provider = new window.AnyWeb.Provider(
+  {
+    appId: '693b6401-135a-4dc3-846b-1c05ad2572f6',
+  },
+  `https://${window.location.host}/#/`
+)
 console.log('开始监听是否准备好')
 provider.on('ready', async () => {
   await walletInitialized()
@@ -661,6 +668,7 @@ async function walletInitialized() {
   const identifyButton = getElement('identify_button')
   const checkLoginButton = getElement('checklogin_button')
   const signButton = getElement('sign_button')
+  const personalSignButton = getElement('personal_sign_button')
 
   const deployContract = getElement('deploy_contract')
 
@@ -682,6 +690,7 @@ async function walletInitialized() {
     importAddressButton.disabled = false
     identifyButton.disabled = false
     signButton.disabled = false
+    personalSignButton.disabled = false
   }
 
   function unAuthed() {
@@ -697,6 +706,7 @@ async function walletInitialized() {
     importAddressButton.disabled = true
     identifyButton.disabled = true
     signButton.disabled = true
+    personalSignButton.disabled = true
   }
 
   try {
@@ -886,7 +896,33 @@ async function walletInitialized() {
           console.log('result', result)
         })
         .catch((e) => {
-          getElement('gateway_test_result').innerHTML = `
+          getElement('sign_result').innerHTML = `
+            Code: ${e.code},\n
+            Message: ${e.message},\n
+            Data: ${e.data}\n 
+          `
+          console.error('签名失败', { message: e.message, data: e.data })
+        })
+    } catch (err) {
+      console.log('err', err)
+    }
+  }
+
+  personalSignButton.onclick = async () => {
+    try {
+      const from = address[0]
+      console.log('connectedAddress', from)
+      provider
+        .request({
+          method: 'cfx_personal_sign',
+          params: [from, JSON.stringify(msgParams)],
+        })
+        .then((result) => {
+          getElement('personal_sign_result').innerHTML = JSON.stringify(result)
+          console.log('result', result)
+        })
+        .catch((e) => {
+          getElement('personal_sign_result').innerHTML = `
             Code: ${e.code},\n
             Message: ${e.message},\n
             Data: ${e.data}\n 

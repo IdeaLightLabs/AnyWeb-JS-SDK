@@ -82,6 +82,7 @@ export type IMethodType =
   | 'unknownType'
   | 'identify'
   | 'checkIdentify'
+  | 'personalSign'
 
 export interface IIframeOptions {
   appId: string

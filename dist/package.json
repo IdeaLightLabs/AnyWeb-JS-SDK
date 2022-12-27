@@ -23,7 +23,7 @@
         "src",
         "lib",
         "types",
-        "anyweb-js-sdk.umd.min.js"
+      "../example/basic-dapp/anyweb-js-sdk.umd.min.js"
     ],
     "browserslit": "cover 99.5%",
     "dependencies": {

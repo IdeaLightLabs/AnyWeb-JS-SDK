@@ -258,7 +258,6 @@ export class Provider implements IProvider {
         case 'cfx_signTypedData':
           const from = params[0]
           const data = params[1]
-          const isRsv = !!params[2]
           return await callIframe(
             'signTypedData',
             {
@@ -268,7 +267,21 @@ export class Provider implements IProvider {
                 ? JSON.stringify({
                     from,
                     data,
-                    isRsv,
+                  })
+                : '',
+            },
+            this
+          )
+        case 'cfx_personal_sign':
+          return await callIframe(
+            'personalSign',
+            {
+              appId: this.appId,
+              chainId: this.chainId,
+              params: params
+                ? JSON.stringify({
+                    from: params[0],
+                    message: params[1],
                   })
                 : '',
             },
