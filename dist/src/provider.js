@@ -156,7 +156,7 @@ class Provider {
      * @protected
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    rawRequest(method, params) {
+    rawRequest(method, params = []) {
         var _a, _b, _c, _d, _e, _f, _g;
         return __awaiter(this, void 0, void 0, function* () {
             if (!Provider.ready) {
@@ -221,7 +221,7 @@ class Provider {
                                 })
                                 : '',
                         }, this);
-                    case 'cfx_personal_sign':
+                    case 'cfx_personalSign':
                         return yield (0, common_1.callIframe)('personalSign', {
                             appId: this.appId,
                             chainId: this.chainId,

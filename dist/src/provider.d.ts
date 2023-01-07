@@ -58,7 +58,7 @@ export declare class Provider implements IProvider {
      * @param params
      * @protected
      */
-    protected rawRequest(method: string, params?: any): Promise<unknown>;
+    protected rawRequest(method: string, params?: any[]): Promise<unknown>;
     /**
      * Monitor information
      * @param type {string} Type of information

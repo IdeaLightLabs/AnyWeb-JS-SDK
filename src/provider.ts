@@ -195,7 +195,10 @@ export class Provider implements IProvider {
    * @protected
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected async rawRequest(method: string, params?: any): Promise<unknown> {
+  protected async rawRequest(
+    method: string,
+    params: any[] = []
+  ): Promise<unknown> {
     if (!Provider.ready) {
       throw new ProviderRpcError(
         ProviderErrorCode.SDKNotReady,

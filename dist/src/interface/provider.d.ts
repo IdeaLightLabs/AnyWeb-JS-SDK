@@ -8,7 +8,7 @@ import { ConsoleLike } from '../utils/types';
  */
 export interface IRequestArguments {
     readonly method: string;
-    readonly params?: unknown;
+    readonly params?: unknown[];
     readonly chainId?: number;
 }
 export interface IBaseProviderOptions {
