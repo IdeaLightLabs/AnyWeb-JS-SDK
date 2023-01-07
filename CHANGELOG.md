@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.6](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.3.4...v1.3.6) (2023-01-07)
+
+
+### Features
+
+* **add cfx_personalSign:** add cfx_personalSign ([f2e9bdf](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/f2e9bdf37a8b739665562090e21fed8c086d142b))
+* **add global:** add personal sign ([f18d393](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/f18d3938d2f533d4e775e4ccd7d4f431b7c9f633))
+
+
+### Bug Fixes
+
+* **Fix bug:** fix personal_sign demo ([21e950a](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/commit/21e950a5c9bf23852235309df5108678301d966a))
+
 ### [1.3.5](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.3.4...v1.3.5) (2022-12-27)
 
 ### [1.3.4](https://github.com/IdeaLightLabs/AnyWeb-JS-SDK/compare/v1.3.1...v1.3.4) (2022-10-26)
